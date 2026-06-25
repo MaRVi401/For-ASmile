@@ -1,6 +1,8 @@
 <?php
 
 namespace Database\Seeders;
+
+use Dom\Text;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,6 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            DonationSystemSeeder::class,
+            TransactionSeeder::class,
         ]);
     }
 }
