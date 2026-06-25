@@ -67,7 +67,7 @@
                             <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online
                         </p>
                     </div>
-                    <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-slate-300 shadow-xs select-none">
+                    <div class="w-10 h-10 bg-linear-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-slate-300 shadow-xs select-none">
                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
                     </div>
                 </div>
