@@ -1,58 +1,231 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# For A Smile (FAS) - Platform E-Donasi Bulanan Terintegrasi
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+For A Smile (FAS) adalah platform pengelolaan donasi digital (*E-Donasi*) berbasis web yang dirancang untuk mengelompokkan berbagai program filantropi ke dalam kampanye donasi bulanan. Sistem ini dilengkapi dengan panel administrasi modern, pengelolaan data yang terintegrasi, serta dukungan pembayaran online melalui Midtrans Payment Gateway.
 
-## About Laravel
+Proyek ini dibangun menggunakan Laravel dengan pendekatan *clean architecture* dan memanfaatkan berbagai library frontend berbasis CDN sehingga tidak memerlukan instalasi Node.js (`npm install`) untuk dijalankan.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 👤 Panel Administrasi
 
-## Learning Laravel
+* Kelola Kampanye Donasi Bulanan
+* Kelola Program Kerja Donasi
+* Monitoring Target dan Progress Dana
+* Manajemen Status Kampanye:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+  * Draft
+  * Upcoming
+  * Active
+  * Completed
+* Laporan dan Riwayat Transaksi Donasi
+* Proteksi Integritas Data (Mencegah *Orphan Data*)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 💳 Sistem Pembayaran
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+* Integrasi Midtrans Payment Gateway
+* Dukungan:
 
-## Agentic Development
+  * GoPay
+  * ShopeePay
+  * Virtual Account Bank
+  * Alfamart
+  * Indomaret
+* Pembaruan Status Donasi Otomatis melalui Callback Midtrans
+* Akumulasi Dana Kampanye Otomatis
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 🎨 User Experience
+
+* SweetAlert2 untuk konfirmasi dan notifikasi
+* Alpine.js untuk interaktivitas frontend
+* Tabler Icons
+* Tailwind CSS v4 melalui CDN
+
+---
+
+## 🛠️ Tech Stack
+
+| Teknologi          | Keterangan             |
+| ------------------ | ---------------------- |
+| Laravel 11 / 12    | Backend Framework      |
+| PHP 8.3+           | Server-side Language   |
+| Tailwind CSS v4    | Styling                |
+| Alpine.js          | Frontend Interactivity |
+| SweetAlert2        | Alert & Modal          |
+| Midtrans Snap      | Payment Gateway        |
+| MySQL / PostgreSQL | Database               |
+| Tabler Icons       | Icon Library           |
+
+---
+
+## 📦 Instalasi Lokal
+
+### 1. Clone Repository
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/username/for-asmile.git
+cd for-asmile
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Install Dependency
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Konfigurasi Environment
 
-## Code of Conduct
+Salin file `.env.example`:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+Lalu sesuaikan konfigurasi berikut:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+APP_URL=http://127.0.0.1:8000
 
-## License
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=for_asmile
+DB_USERNAME=root
+DB_PASSWORD=
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIDTRANS_SERVER_KEY=SB-Mid-server-YOUR_SERVER_KEY
+MIDTRANS_CLIENT_KEY=SB-Mid-client-YOUR_CLIENT_KEY
+MIDTRANS_IS_PRODUCTION=false
+```
+
+### 4. Generate Key dan Migrasi Database
+
+```bash
+php artisan key:generate
+php artisan migrate --seed
+```
+
+### 5. Buat Symbolic Link Storage
+
+```bash
+php artisan storage:link
+```
+
+### 6. Jalankan Aplikasi
+
+```bash
+php artisan serve
+```
+
+Akses aplikasi melalui:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## 🌐 Pengujian Callback Midtrans Menggunakan Ngrok
+
+Karena server Midtrans tidak dapat mengakses localhost secara langsung, gunakan Ngrok untuk membuat URL publik sementara.
+
+### Jalankan Laravel
+
+```bash
+php artisan serve
+```
+
+### Jalankan Ngrok
+
+```bash
+ngrok http 8000
+```
+
+Contoh hasil:
+
+```text
+https://a1b2-34-56.ngrok-free.app
+```
+
+### Perbarui APP_URL
+
+```env
+APP_URL=https://a1b2-34-56.ngrok-free.app
+```
+
+### Konfigurasi Midtrans
+
+Masuk ke:
+
+**Settings → Configuration**
+
+Isi kolom **Payment Notification URL**:
+
+```text
+https://a1b2-34-56.ngrok-free.app/midtrans/callback
+```
+
+Simpan konfigurasi dan lakukan simulasi pembayaran menggunakan Midtrans Sandbox.
+
+---
+
+## 📂 Struktur Direktori
+
+```text
+app/
+├── Http/
+│   └── Controllers/
+│       ├── Admin/
+│       │   ├── CampaignController.php
+│       │   └── ProgramController.php
+│       └── MidtransCallbackController.php
+│
+├── Models/
+│   ├── Campaign.php
+│   ├── Program.php
+│   └── Transaction.php
+
+bootstrap/
+└── app.php
+
+config/
+└── services.php
+
+resources/
+└── views/
+    └── admin/
+        ├── layouts/
+        │   └── app.blade.php
+        ├── campaigns/
+        └── programs/
+
+routes/
+└── web.php
+```
+
+---
+
+## 🔐 Midtrans Callback Endpoint
+
+Contoh endpoint callback:
+
+```php
+Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle']);
+```
+
+Pastikan endpoint ini dapat diakses publik melalui URL Ngrok atau server hosting.
+
+---
+
+## 📄 License
+
+Project ini dilisensikan di bawah **MIT License**.
+
+---
+
+## 👨‍💻 Developer
+
+**For A Smile (FAS)**
+
+Platform E-Donasi Bulanan Terintegrasi berbasis Laravel dan Midtrans untuk mendukung kegiatan sosial dan filantropi secara digital.
