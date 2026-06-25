@@ -83,11 +83,17 @@ class CampaignController extends Controller
     // 6. Menghapus Kampanye
     public function destroy(Campaign $campaign)
     {
+        // Cek apakah kampanye memiliki program kerja terkait
+        if ($campaign->programs()->exists()) {
+            return redirect()->route('admin.campaigns.index')
+                ->with('error', 'Kampanye tidak dapat dihapus karena masih memiliki program kerja aktif di dalamnya!');
+        }
+
         // Hapus gambar terkait jika ada
         if ($campaign->image_url) {
             Storage::disk('public')->delete($campaign->image_url);
         }
-        
+
         $campaign->delete();
         return redirect()->route('admin.campaigns.index')->with('success', 'Kampanye berhasil dihapus!');
     }

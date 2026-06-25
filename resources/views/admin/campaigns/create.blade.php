@@ -20,7 +20,7 @@
 
         <!-- Form Card -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <form action="{{ route('admin.campaigns.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 
                 <!-- Baris 0: Upload Gambar Kampanye -->

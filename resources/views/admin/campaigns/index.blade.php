@@ -110,11 +110,10 @@
                                             <i class="ti ti-edit text-lg"></i>
                                         </a>
                                         <!-- Tombol Hapus -->
-                                        <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}" method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kampanye bulanan ini? Semua program di dalamnya juga akan ikut terhapus!');">
+                                        <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
+                                            <button type="button" onclick="confirmDeleteCampaign(this)"
                                                 class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition cursor-pointer"
                                                 title="Hapus">
                                                 <i class="ti ti-trash text-lg"></i>
@@ -141,3 +140,29 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script>
+        function confirmDeleteCampaign(button) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Kampanye ini tidak dapat dihapus jika masih mengikat program kerja aktif di dalamnya!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626', // Red-600
+                cancelButtonColor: '#64748b', // Slate-500
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-xl px-4 py-2 font-medium',
+                    cancelButton: 'rounded-xl px-4 py-2 font-medium'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Cari form pembungkus terdekat dan jalankan submit
+                    button.closest('form').submit();
+                }
+            });
+        }
+    </script>
+@endpush

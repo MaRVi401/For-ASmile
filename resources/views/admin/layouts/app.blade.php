@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Panel') - E-Donasi</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
@@ -80,20 +84,67 @@
             </header>
 
             <main class="flex-1 p-8 overflow-y-auto">
-                @if (session('success'))
-                    <div
-                        class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-800 rounded-r-xl shadow-xs text-sm flex items-center gap-2">
-                        <i class="ti ti-circle-check text-lg text-green-600"></i>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                @endif
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // 1. Notifikasi Sukses
+                        @if (session('success'))
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: "{{ session('success') }}",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                customClass: {
+                                    popup: 'rounded-2xl'
+                                }
+                            });
+                        @endif
+
+                        // 2. Notifikasi Gagal / Kendala Tunggal (Misal: Gagal hapus karena relasi)
+                        @if (session('error'))
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi Kendala!',
+                                text: "{{ session('error') }}",
+                                confirmButtonText: 'Mengerti',
+                                confirmButtonColor: '#3b82f6', // Warna biru-600 Tailwind
+                                customClass: {
+                                    popup: 'rounded-2xl',
+                                    confirmButton: 'rounded-xl px-5 py-2.5 font-medium'
+                                }
+                            });
+                        @endif
+
+                        // 3. Notifikasi Error Validasi Form
+                        @if ($errors->any())
+                            let errorMessages = '';
+                            @foreach ($errors->all() as $error)
+                                errorMessages += '• {{ $error }}\n';
+                            @endforeach
+
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Periksa Isian Form!',
+                                text: errorMessages,
+                                confirmButtonText: 'Perbaiki',
+                                confirmButtonColor: '#f59e0b', // Warna amber-500 Tailwind
+                                customClass: {
+                                    popup: 'rounded-2xl',
+                                    confirmButton: 'rounded-xl px-5 py-2.5 font-medium'
+                                }
+                            });
+                        @endif
+                    });
+                </script>
 
                 @yield('content')
             </main>
 
         </div>
     </div>
-
+    @stack('scripts')
 </body>
 
 </html>

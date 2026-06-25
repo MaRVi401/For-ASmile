@@ -5,11 +5,20 @@ namespace Database\Seeders;
 use App\Models\Campaign;
 use App\Models\Program;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DonationSystemSeeder extends Seeder
 {
     public function run(): void
     {
+        // Hapus data lama dan reset auto increment
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        Program::truncate();
+        Campaign::truncate();
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // 1. DATA KAMPANYE PERTAMA (Bulan Ini)
         $campaign1 = Campaign::create([
             'title' => 'Kampanye Kebaikan Juni 2026',
