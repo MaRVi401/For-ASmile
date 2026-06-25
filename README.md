@@ -64,8 +64,8 @@ Proyek ini dibangun menggunakan Laravel dengan pendekatan *clean architecture* d
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/username/for-asmile.git
-cd for-asmile
+git clone https://github.com/MaRVi401/For-ASmile
+cd For-ASmile
 ```
 
 ### 2. Install Dependency
