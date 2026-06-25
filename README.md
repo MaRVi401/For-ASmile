@@ -48,7 +48,7 @@ Proyek ini dibangun menggunakan Laravel dengan pendekatan *clean architecture* d
 
 | Teknologi          | Keterangan             |
 | ------------------ | ---------------------- |
-| Laravel 11 / 12    | Backend Framework      |
+| Laravel 13         | Backend Framework      |
 | PHP 8.3+           | Server-side Language   |
 | Tailwind CSS v4    | Styling                |
 | Alpine.js          | Frontend Interactivity |
