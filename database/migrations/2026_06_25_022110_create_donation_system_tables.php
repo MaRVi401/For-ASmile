@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('month', 7); // Format: "2026-05" untuk filter bulanan
             $table->decimal('target_amount', 12, 2); // Kebutuhan dana (e.g., 50000000.00)
             $table->decimal('current_amount', 12, 2)->default(0.00); // Dana terkumpul dari Midtrans
+            $table->string('image_url')->nullable(); // Foto/Banner kampanye bulanan
             $table->text('description')->nullable();
             $table->enum('status', ['draft', 'upcoming', 'active', 'completed'])->default('draft');
             $table->timestamps();
