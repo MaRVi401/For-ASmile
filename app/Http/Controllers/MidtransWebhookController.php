@@ -31,10 +31,17 @@ class MidtransWebhookController extends Controller
 
         // Logika konversi status Midtrans ke kolom status database aplikasi
         if (in_array($transactionStatus, ['settlement', 'capture'])) {
-            $transaction->status = 'success'; // Ubah status menjadi success agar dibaca oleh Blade
+            // PERBAIKAN: Ganti 'success' menjadi 'settlement' agar sesuai dengan ENUM database
+            $transaction->status = 'settlement'; 
         } elseif ($transactionStatus == 'pending') {
             $transaction->status = 'pending';
-        } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+        } elseif ($transactionStatus == 'expire') {
+            // PERBAIKAN: Gunakan status 'expire' yang memang sudah ada di ENUM
+            $transaction->status = 'expire';
+        } elseif ($transactionStatus == 'cancel') {
+            // PERBAIKAN: Gunakan status 'cancel' yang memang sudah ada di ENUM
+            $transaction->status = 'cancel';
+        } elseif ($transactionStatus == 'deny') {
             $transaction->status = 'failed';
         }
 
