@@ -12,10 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        
+        // Nanti bisa ditambahkan middleware khusus untuk admin, misalnya untuk memeriksa apakah user yang login adalah admin atau bukan.
+        $middleware->redirectGuestsTo(fn() => route('admin.login'));
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
-        
+
         $middleware->preventRequestForgery(except: [
             '/midtrans/webhook',
         ]);

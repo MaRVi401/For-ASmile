@@ -8,8 +8,12 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MidtransWebhookController;
 
+// ==================== ROUTE HALAMAN UTAMA UNTUK TESTING ====================
+use App\Models\Campaign;
+
 Route::get('/', function () {
-    return view('welcome');
+    $campaigns = Campaign::with('program')->latest()->get();
+    return view('welcome', compact('campaigns'));
 });
 
 // ==================== ROUTE DONASI ====================
