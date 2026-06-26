@@ -57,7 +57,7 @@
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1 bg-red-50 text-red-700 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                        Gagal / Batal
+                                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>Gagal
                                     </span>
                                 @endif
                             </td>

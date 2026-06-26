@@ -54,6 +54,11 @@ class DonationController extends Controller
                 'order_id' => $orderId,
                 'gross_amount' => (int) $request->amount,
             ],
+            'expiry' => [
+                'start_time' => date('Y-m-d H:i:s O'), // Waktu mulai (saat ini)
+                'unit' => 'minute', // Satuan waktu: 'minute', 'hour', atau 'day'
+                'duration' => 1,   // Contoh: 60 menit (1 jam)
+            ],
             'item_details' => [
                 [
                     'id' => $campaign->id,
@@ -74,7 +79,6 @@ class DonationController extends Controller
 
             // Anda bisa mereturn token ini ke view atau mengirimkannya sebagai respon JSON jika menggunakan AJAX
             return view('donations.checkout', compact('transaction', 'snapToken', 'campaign'));
-
         } catch (Exception $e) {
             return back()->with('error', 'Gagal menghubungkan ke payment gateway: ' . $e->getMessage());
         }

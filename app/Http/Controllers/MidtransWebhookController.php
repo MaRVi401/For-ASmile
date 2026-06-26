@@ -10,6 +10,14 @@ class MidtransWebhookController extends Controller
 {
     public function handleNotification(Request $request)
     {
+        // Validasi signature key untuk keamanan
+        $serverKey = config('midtrans.server_key');
+        $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+        if ($hashed !== $request->signature_key) {
+            return response()->json(['message' => 'Invalid signature'], 403);
+        }
+        
         // Ambil data langsung menggunakan wrapper bawaan Laravel (Anti-Null)
         $orderId = $request->input('order_id');
         $transactionStatus = $request->input('transaction_status');
@@ -31,15 +39,12 @@ class MidtransWebhookController extends Controller
 
         // Logika konversi status Midtrans ke kolom status database aplikasi
         if (in_array($transactionStatus, ['settlement', 'capture'])) {
-            // PERBAIKAN: Ganti 'success' menjadi 'settlement' agar sesuai dengan ENUM database
-            $transaction->status = 'settlement'; 
+            $transaction->status = 'settlement';
         } elseif ($transactionStatus == 'pending') {
             $transaction->status = 'pending';
         } elseif ($transactionStatus == 'expire') {
-            // PERBAIKAN: Gunakan status 'expire' yang memang sudah ada di ENUM
             $transaction->status = 'expire';
         } elseif ($transactionStatus == 'cancel') {
-            // PERBAIKAN: Gunakan status 'cancel' yang memang sudah ada di ENUM
             $transaction->status = 'cancel';
         } elseif ($transactionStatus == 'deny') {
             $transaction->status = 'failed';
@@ -48,7 +53,7 @@ class MidtransWebhookController extends Controller
         // Simpan data pelengkap pembayaran
         $transaction->payment_type = $type;
         $transaction->midtrans_transaction_id = $request->input('transaction_id');
-        
+
         // Eksekusi simpan ke database
         $transaction->save();
 
