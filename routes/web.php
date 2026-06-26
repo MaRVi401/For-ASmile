@@ -5,10 +5,21 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\MidtransWebhookController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// ==================== ROUTE DONASI ====================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/campaign/{campaign}/donate', [DonationController::class, 'create'])->name('donation.create');
+    Route::post('/donate', [DonationController::class, 'store'])->name('donation.store');
+});
+
+// ==================== ROUTE MIDTRANS WEBHOOK ====================
+Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handleNotification']);
 
 // ==================== ROUTE AUTH ADMIN ====================
 Route::prefix('admin')->group(function () {
