@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        
+
         // Nanti bisa ditambahkan middleware khusus untuk admin, misalnya untuk memeriksa apakah user yang login adalah admin atau bukan.
         $middleware->redirectGuestsTo(fn() => route('admin.login'));
 
@@ -21,7 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->preventRequestForgery(except: [
-            '/midtrans/webhook',
+            'midtrans/webhook',
+            '/midtrans/webhook'
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
