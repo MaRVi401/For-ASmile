@@ -32,13 +32,12 @@ class DonationController extends Controller
     {
         $request->validate([
             'campaign_id' => 'required|exists:campaigns,id',
-            'amount' => 'required|numeric|min:10000', // Minimal donasi 10.000
+            'amount' => 'required|numeric|min:10000',
         ]);
 
         $campaign = Campaign::findOrFail($request->campaign_id);
         $orderId = 'FAS-' . time() . '-' . rand(100, 999);
 
-        // 1. Siapkan parameter Midtrans (Tanpa simpan ke DB dulu)
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
@@ -46,8 +45,8 @@ class DonationController extends Controller
             ],
             'expiry' => [
                 'start_time' => date('Y-m-d H:i:s O'),
-                'unit' => 'minute',
-                'duration' => 1, // Pastikan durasi sesuai kebutuhan satuannya menit atau jam
+                'unit' => 'minute', // Bisa juga 'hour' atau 'day'
+                'duration' => 15, // Disarankan 15-60 menit agar user punya waktu transfer
             ],
             'item_details' => [
                 [
@@ -64,10 +63,10 @@ class DonationController extends Controller
         ];
 
         try {
-            // 2. Dapatkan Snap Token DULU
+            // 1. Dapatkan Snap Token dari Midtrans
             $snapToken = Snap::getSnapToken($params);
 
-            // 3. BARU simpan data transaksi ke database setelah sukses mendapatkan token
+            // 2. Simpan data transaksi ke database setelah sukses mendapatkan token
             $transaction = Transaction::create([
                 'order_id' => $orderId,
                 'user_id' => Auth::id(),
@@ -77,9 +76,24 @@ class DonationController extends Controller
                 'status' => 'pending',
             ]);
 
+            // PERUBAHAN DISINI: Jika request dikirim lewat AJAX/Fetch, return JSON
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'snapToken' => $snapToken,
+                    'transaction' => $transaction
+                ]);
+            }
+
+            // Fallback jika diakses normal tanpa AJAX
             return view('donations.checkout', compact('transaction', 'snapToken', 'campaign'));
         } catch (Exception $e) {
-            // Jika koneksi ke Midtrans gagal, maka Transaction::create tidak akan pernah tereksekusi
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghubungkan ke payment gateway: ' . $e->getMessage()
+                ], 500);
+            }
             return back()->with('error', 'Gagal menghubungkan ke payment gateway: ' . $e->getMessage());
         }
     }
