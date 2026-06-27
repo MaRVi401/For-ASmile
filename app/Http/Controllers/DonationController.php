@@ -32,32 +32,22 @@ class DonationController extends Controller
     {
         $request->validate([
             'campaign_id' => 'required|exists:campaigns,id',
-            'amount' => 'required|numeric|min:10000', // Minimal donasi Rp 10.000
+            'amount' => 'required|numeric|min:10000', // Minimal donasi 10.000
         ]);
 
         $campaign = Campaign::findOrFail($request->campaign_id);
         $orderId = 'FAS-' . time() . '-' . rand(100, 999);
 
-        // 1. Simpan data awal transaksi ke database dengan status 'pending'
-        $transaction = Transaction::create([
-            'order_id' => $orderId,
-            'user_id' => Auth::id(), // null jika mengizinkan anonim
-            'campaign_id' => $campaign->id,
-            'amount' => $request->amount,
-            'payment_type' => 'midtrans',
-            'status' => 'pending',
-        ]);
-
-        // 2. Siapkan parameter untuk dikirim ke Midtrans
+        // 1. Siapkan parameter Midtrans (Tanpa simpan ke DB dulu)
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
                 'gross_amount' => (int) $request->amount,
             ],
             'expiry' => [
-                'start_time' => date('Y-m-d H:i:s O'), // Waktu mulai (saat ini)
-                'unit' => 'minute', // Satuan waktu: 'minute', 'hour', atau 'day'
-                'duration' => 1,   // Contoh: 60 menit (1 jam)
+                'start_time' => date('Y-m-d H:i:s O'),
+                'unit' => 'minute',
+                'duration' => 1, // Pastikan durasi sesuai kebutuhan satuannya menit atau jam
             ],
             'item_details' => [
                 [
@@ -74,12 +64,22 @@ class DonationController extends Controller
         ];
 
         try {
-            // 3. Dapatkan Snap Token dari Midtrans
+            // 2. Dapatkan Snap Token DULU
             $snapToken = Snap::getSnapToken($params);
 
-            // Anda bisa mereturn token ini ke view atau mengirimkannya sebagai respon JSON jika menggunakan AJAX
+            // 3. BARU simpan data transaksi ke database setelah sukses mendapatkan token
+            $transaction = Transaction::create([
+                'order_id' => $orderId,
+                'user_id' => Auth::id(),
+                'campaign_id' => $campaign->id,
+                'amount' => $request->amount,
+                'payment_type' => 'midtrans',
+                'status' => 'pending',
+            ]);
+
             return view('donations.checkout', compact('transaction', 'snapToken', 'campaign'));
         } catch (Exception $e) {
+            // Jika koneksi ke Midtrans gagal, maka Transaction::create tidak akan pernah tereksekusi
             return back()->with('error', 'Gagal menghubungkan ke payment gateway: ' . $e->getMessage());
         }
     }
