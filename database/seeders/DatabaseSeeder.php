@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             DonationSystemSeeder::class,
             TransactionSeeder::class,
+            DashboardSeeder::class,
         ]);
     }
 }

@@ -8,7 +8,8 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-2xl font-bold text-slate-800">Kelola Kampanye Bulanan</h2>
-                <p class="text-slate-500 text-sm mt-1">Wadah utama donasi terikat waktu untuk mengelompokkan program kerja.</p>
+                <p class="text-slate-500 text-sm mt-1">Wadah utama donasi terikat waktu untuk mengelompokkan program kerja.
+                </p>
             </div>
             <a href="{{ route('admin.campaigns.create') }}"
                 class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-md shadow-blue-200 transition duration-200 cursor-pointer">
@@ -21,7 +22,8 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                        <tr
+                            class="bg-slate-50 border-b border-slate-200 text-slate-400 text-xs font-bold uppercase tracking-wider">
                             <th class="px-6 py-4">Nama Kampanye / Judul</th>
                             <th class="px-6 py-4">Target Bulan</th>
                             <th class="px-6 py-4">Target Dana</th>
@@ -34,12 +36,14 @@
                         @forelse($campaigns as $campaign)
                             <tr class="hover:bg-slate-50/50 transition">
                                 <td class="px-6 py-4 flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                                    <div
+                                        class="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                                         @if ($campaign->image_url)
                                             <img src="{{ asset('storage/' . $campaign->image_url) }}" alt="Poster"
                                                 class="w-full h-full object-cover">
                                         @else
-                                            <div class="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
+                                            <div
+                                                class="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
                                                 <i class="ti ti-photo text-xl"></i>
                                             </div>
                                         @endif
@@ -63,33 +67,37 @@
                                     <p class="text-emerald-600 font-bold">
                                         Rp {{ number_format($campaign->current_amount, 0, ',', '.') }}
                                     </p>
-                                    
+
                                     <!-- Progress Bar Dinamis Berbasis Maksimal 100% -->
                                     <div class="w-full bg-slate-100 h-1.5 rounded-full mt-1.5 overflow-hidden flex">
                                         @php
                                             // Menghitung persentase capaian donasi secara matematis terhadap target
-                                            $percentage = $campaign->target_amount > 0 
-                                                ? ($campaign->current_amount / $campaign->target_amount) * 100 
-                                                : 0;
-                                            
+                                            $percentage =
+                                                $campaign->target_amount > 0
+                                                    ? ($campaign->current_amount / $campaign->target_amount) * 100
+                                                    : 0;
+
                                             // Batasi visual bar maksimal 100% jika dana terkumpul melebihi target nominal
                                             $displayPercentage = $percentage > 100 ? 100 : $percentage;
                                         @endphp
-                                        <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" 
-                                             style="width: {{ $displayPercentage }}%"
-                                             title="{{ round($percentage, 1) }}% Terpenuhi">
+                                        <div class="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                                            style="width: {{ $displayPercentage }}%"
+                                            title="{{ round($percentage, 1) }}% Terpenuhi">
                                         </div>
                                     </div>
-                                    <p class="text-[10px] text-slate-400 font-normal mt-0.5">{{ round($percentage, 1) }}% Terpenuhi</p>
+                                    <p class="text-[10px] text-slate-400 font-normal mt-0.5">{{ round($percentage, 1) }}%
+                                        Terpenuhi</p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <!-- Filter Status: Hanya Mengakomodasi Pilihan Active dan Draft -->
                                     @if ($campaign->status === 'active')
-                                        <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
+                                        <span
+                                            class="inline-flex items-center gap-1 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
                                             <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Aktif
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-xs font-semibold">
+                                        <span
+                                            class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-xs font-semibold">
                                             Draft
                                         </span>
                                     @endif
@@ -103,7 +111,8 @@
                                             <i class="ti ti-edit text-lg"></i>
                                         </a>
                                         <!-- Tombol Hapus -->
-                                        <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}" method="POST">
+                                        <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}"
+                                            method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" onclick="confirmDeleteCampaign(this)"
@@ -121,7 +130,8 @@
                                     <div class="flex flex-col items-center justify-center space-y-2">
                                         <i class="ti ti-calendar-cancel text-4xl text-slate-300"></i>
                                         <p class="text-base font-semibold text-slate-500">Belum Ada Data Kampanye</p>
-                                        <p class="text-sm font-normal text-slate-400">Silakan klik tombol "Tambah Kampanye" di atas untuk membuat wadah bulanan baru.</p>
+                                        <p class="text-sm font-normal text-slate-400">Silakan klik tombol "Tambah Kampanye"
+                                            di atas untuk membuat wadah bulanan baru.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -129,7 +139,11 @@
                     </tbody>
                 </table>
             </div>
+            <div class="px-6 py-4 border-t border-slate-100">
+                {{ $campaigns->links() }}
+            </div>
         </div>
+    </div>
     </div>
 @endsection
 

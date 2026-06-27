@@ -54,7 +54,7 @@ class DonationSystemSeeder extends Seeder
             'current_amount' => 0,
             'image_url' => null,
             'description' => 'Persiapan wadah penggalangan dana kemanusiaan untuk menyambut program kerja sosial di bulan Juli 2026.',
-            'status' => 'upcoming',
+            'status' => 'active',
         ]);
 
         // Sub-Program untuk Kampanye Kedua

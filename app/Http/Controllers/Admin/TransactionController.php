@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
-use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
@@ -12,9 +11,7 @@ class TransactionController extends Controller
     public function index()
     {
         // Mengambil data transaksi beserta relasi user dan kampanye induknya
-        $transactions = Transaction::with(['user', 'campaign'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $transactions = Transaction::with(['user', 'campaign'])->latest()->paginate(10);
 
         return view('admin.transactions.index', compact('transactions'));
     }

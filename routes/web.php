@@ -7,12 +7,13 @@ use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MidtransWebhookController;
+use App\Http\Controllers\Admin\DashboardController;
 
 // ==================== ROUTE HALAMAN UTAMA UNTUK TESTING ====================
 use App\Models\Campaign;
 
 Route::get('/', function () {
-    $campaigns = Campaign::with('program')->latest()->get();
+    $campaigns = Campaign::with('programs')->latest()->get();
     return view('welcome', compact('campaigns'));
 });
 
@@ -36,9 +37,7 @@ Route::prefix('admin')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     // Halaman Dashboard Utama Admin
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // ==================== ROUTE KAMPANYE BULANAN ====================
     Route::resource('campaigns', CampaignController::class)->names([

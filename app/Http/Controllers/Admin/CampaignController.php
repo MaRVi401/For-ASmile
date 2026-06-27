@@ -18,7 +18,7 @@ class CampaignController extends Controller
             $query->where('status', 'settlement');
         }], 'amount')
         ->orderBy('month', 'desc')
-        ->get();
+        ->paginate(10);
 
         // Menyinkronkan nilai hitungan dinamis ke properti current_amount agar dibaca oleh Blade View
         foreach ($campaigns as $campaign) {

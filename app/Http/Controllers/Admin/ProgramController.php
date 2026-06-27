@@ -13,7 +13,7 @@ class ProgramController extends Controller
     // Menampilkan semua program kerja beserta infomasi kampanye induknya
     public function index()
     {
-        $programs = Program::with('campaign')->orderBy('created_at', 'desc')->get();
+        $programs = Program::with('campaign')->latest()->paginate(10);
         return view('admin.programs.index', compact('programs'));
     }
 
