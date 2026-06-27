@@ -153,11 +153,11 @@
                 window.snap.pay(data.snapToken, {
                     onSuccess: function(result) {
                         // Redirect atau aksi ketika sukses bayar
-                        window.location.href = `/transactions`;
+                        window.location.href = `/`;
                     },
                     onPending: function(result) {
                         // Terjadi ketika user memilih instruksi pembayaran tapi belum transfer (misal Alfamart/VA)
-                        window.location.href = `/transactions`;
+                        window.location.href = `/`;
                     },
                     onError: function(result) {
                         alert("Pembayaran gagal!");
