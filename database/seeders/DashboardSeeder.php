@@ -25,8 +25,6 @@ class DashboardSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Memulai seeding data transaksi untuk grafik dashboard...');
-
         // 2. Tentukan rentang waktu 6 bulan terakhir (agar grafik penuh dan cantik)
         // Kita simulasikan total donasi meningkat tiap bulannya secara realistis
         $monthlyTargetDonations = [
@@ -69,7 +67,5 @@ class DashboardSeeder extends Seeder
                 ]);
             }
         }
-
-        $this->command->info('Seeding transaksi sukses untuk dashboard berhasil diselesaikan!');
     }
 }

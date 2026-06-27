@@ -14,15 +14,17 @@ class CampaignController extends Controller
     {
         // Mengambil data kampanye bulanan serta menghitung secara dinamis 
         // total nominal dari transaksi yang hanya berstatus 'settlement' (sukses)
-        $campaigns = Campaign::withSum(['transactions' => function($query) {
+        $campaigns = Campaign::withSum(['transactions' => function ($query) {
             $query->where('status', 'settlement');
         }], 'amount')
-        ->orderBy('month', 'desc')
-        ->paginate(10);
+            ->withSum('distributions', 'amount_distributed')
+            ->orderBy('month', 'desc')
+            ->paginate(10);
 
         // Menyinkronkan nilai hitungan dinamis ke properti current_amount agar dibaca oleh Blade View
         foreach ($campaigns as $campaign) {
             $campaign->current_amount = $campaign->transactions_sum_amount ?? 0.00;
+            $campaign->distributed_amount = $campaign->distributions_sum_amount_distributed ?? 0.00;
         }
 
         return view('admin.campaigns.index', compact('campaigns'));
@@ -42,7 +44,7 @@ class CampaignController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             // Validasi agar tidak bisa memilih bulan yang sudah terlewat dari bulan sekarang
-            'month' => 'required|string|size:7|unique:campaigns,month|after_or_equal:' . $currentMonth, 
+            'month' => 'required|string|size:7|unique:campaigns,month|after_or_equal:' . $currentMonth,
             'target_amount' => 'required|numeric|min:0',
             // Aturan diperketat hanya menerima status 'draft' dan 'active'
             'status' => 'required|in:draft,active',

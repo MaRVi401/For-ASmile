@@ -58,6 +58,15 @@
                     class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.transactions.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
                     <i class="ti ti-report-money text-xl"></i> Laporan Transaksi
                 </a>
+                <a href="{{ route('admin.beneficiaries.index') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.beneficiaries.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    <i class="ti ti-cookie-man text-xl"></i> Data Penerima
+                </a>
+
+                <a href="{{ route('admin.distributions.index') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.distributions.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    <i class="ti ti-moneybag-move text-xl"></i> Data Penyaluran
+                </a>
             </nav>
 
             <div class="p-4 border-t border-slate-800">

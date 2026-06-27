@@ -28,6 +28,7 @@
                             <th class="px-6 py-4">Target Bulan</th>
                             <th class="px-6 py-4">Target Dana</th>
                             <th class="px-6 py-4">Dana Terkumpul</th>
+                            <th class="px-6 py-4">Dana Tersalurkan</th>
                             <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4 text-right">Aksi</th>
                         </tr>
@@ -88,6 +89,14 @@
                                     <p class="text-[10px] text-slate-400 font-normal mt-0.5">{{ round($percentage, 1) }}%
                                         Terpenuhi</p>
                                 </td>
+
+                                <td class="px-6 py-4">
+                                    <p class="text-blue-600 font-bold">
+                                        Rp {{ number_format($campaign->distributed_amount, 0, ',', '.') }}
+                                    </p>
+                                    <p class="text-[10px] text-slate-400 font-normal mt-1">Total pencatatan log</p>
+                                </td>
+
                                 <td class="px-6 py-4">
                                     <!-- Filter Status: Hanya Mengakomodasi Pilihan Active dan Draft -->
                                     @if ($campaign->status === 'active')

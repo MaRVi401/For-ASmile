@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DistributionController;
+use App\Http\Controllers\Admin\BeneficiaryController;
 
 // ==================== ROUTE HALAMAN UTAMA UNTUK TESTING ====================
 use App\Models\Campaign;
@@ -63,5 +65,25 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('transactions', TransactionController::class)->only(['index', 'show'])->names([
         'index' => 'admin.transactions.index',
         'show' => 'admin.transactions.show',
+    ]);
+
+    // ==================== ROUTE PENYALURAN DONASI ====================
+    Route::resource('distributions', DistributionController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])->names([
+        'index'   => 'admin.distributions.index',
+        'create'  => 'admin.distributions.create',
+        'store'   => 'admin.distributions.store',
+        'edit'    => 'admin.distributions.edit',
+        'update'  => 'admin.distributions.update',
+        'destroy' => 'admin.distributions.destroy',
+    ]);
+
+    // ==================== ROUTE PENERIMA SANTUNAN ====================
+    Route::resource('beneficiaries', BeneficiaryController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])->names([
+        'index'   => 'admin.beneficiaries.index',
+        'create'  => 'admin.beneficiaries.create',
+        'store'   => 'admin.beneficiaries.store',
+        'edit'    => 'admin.beneficiaries.edit',
+        'update'  => 'admin.beneficiaries.update',
+        'destroy' => 'admin.beneficiaries.destroy',
     ]);
 });

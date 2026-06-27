@@ -27,4 +27,13 @@ class Campaign extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    /**
+     * Relasi ke catatan log penyaluran santunan
+     * Satu kampanye bulanan bisa memiliki banyak log penyaluran donasi.
+     */
+    public function distributions(): HasMany
+    {
+        return $this->hasMany(Distribution::class);
+    }
 }

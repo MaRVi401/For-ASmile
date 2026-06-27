@@ -48,6 +48,26 @@ return new class extends Migration
             $table->string('midtrans_transaction_id')->nullable(); // ID Transaksi resmi dari Midtrans
             $table->timestamps();
         });
+
+        // 4. TABEL BENEFICIARIES (Penerima Manfaat Program)
+        Schema::create('beneficiaries', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->timestamps();
+        });
+
+        // 5. TABEL DISTRIBUTIONS (Pendistribusian Dana ke Penerima Manfaat)
+        Schema::create('distributions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
+            $table->foreignId('beneficiary_id')->constrained()->onDelete('cascade');
+            $table->decimal('amount_distributed', 12, 2);
+            $table->timestamp('distributed_at')->useCurrent();
+            $table->text('notes')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -56,8 +76,11 @@ return new class extends Migration
     public function down(): void
     {
         // Urutan drop dibalik untuk menghindari foreign key violation error
+        Schema::dropIfExists('distributions');
+        Schema::dropIfExists('beneficiaries');
         Schema::dropIfExists('transactions');
         Schema::dropIfExists('programs');
         Schema::dropIfExists('campaigns');
+        
     }
 };
