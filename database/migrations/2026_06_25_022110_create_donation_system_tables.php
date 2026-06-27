@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('current_amount', 12, 2)->default(0.00); // Dana terkumpul dari Midtrans
             $table->string('image_url')->nullable(); // Foto/Banner kampanye bulanan
             $table->text('description')->nullable();
-            $table->enum('status', ['draft', 'upcoming', 'active', 'completed'])->default('draft');
+            $table->enum('status', ['draft', 'active'])->default('draft');
             $table->timestamps();
         });
 

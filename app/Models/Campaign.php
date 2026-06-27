@@ -3,19 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany; // Memastikan import HasMany sudah ada
 
 class Campaign extends Model
 {
-    // Pastikan fillable atau guarded kamu sudah ada di sini
+    // Memastikan id dijaga dari mass assignment
     protected $guarded = ['id'];
 
     /**
-     * Relasi balik ke model Program
-     * Setiap kampanye berada di bawah sebuah program tertentu
+     * Relasi ke model Program (PERBAIKAN)
+     * Satu wadah kampanye bulanan menampung banyak sub-program kegiatan kerja
      */
-    public function program(): BelongsTo
+    public function programs(): HasMany
     {
-        return $this->belongsTo(Program::class);
+        return $this->hasMany(Program::class);
+    }
+
+    /**
+     * Relasi ke model Transaction
+     * Satu kampanye bulanan memiliki banyak transaksi donasi masuk
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

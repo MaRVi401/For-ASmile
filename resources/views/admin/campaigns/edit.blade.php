@@ -13,8 +13,7 @@
             </a>
             <div>
                 <h2 class="text-2xl font-bold text-slate-800">Edit Kampanye Bulanan</h2>
-                <p class="text-slate-500 text-sm mt-1">Perbarui data target, deskripsi, atau status publikasi untuk periode
-                    ini.</p>
+                <p class="text-slate-500 text-sm mt-1">Perbarui data target, deskripsi, atau status publikasi untuk periode ini.</p>
             </div>
         </div>
 
@@ -24,24 +23,28 @@
                 @csrf
                 @method('PUT')
 
-                <!-- Baris 0: Gambar / Poster Kampanye -->
+                <!-- Baris 0: Gambar / Poster Kampanye dengan Live Preview -->
                 <div>
-                    <label class="block text-slate-700 text-sm font-semibold mb-2">Gambar / Poster Kampanye</label>
-                    @if ($campaign->image_url)
-                        <div class="mb-3">
-                            <img src="{{ asset('storage/' . $campaign->image_url) }}" alt="Preview Poster"
-                                class="h-32 w-auto object-cover rounded-xl border border-slate-200 shadow-xs">
+                    <label for="image" class="block text-slate-700 text-sm font-semibold mb-2">Gambar / Poster Kampanye</label>
+                    <div class="flex flex-col md:flex-row gap-4 items-start">
+                        <!-- Kotak Preview Gambar (Menampilkan gambar lama jika ada) -->
+                        <div id="image-preview-container" class="{{ $campaign->image_url ? '' : 'hidden' }} w-full md:w-48 h-48 border-2 border-dashed border-slate-200 rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center shrink-0">
+                            <img id="image-preview" src="{{ $campaign->image_url ? asset('storage/' . $campaign->image_url) : '#' }}" alt="Preview" class="w-full h-full object-cover">
                         </div>
-                    @endif
-                    <input type="file" name="image" id="image" accept="image/*"
-                        class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                    <p class="text-xs text-slate-400 mt-1">Kosongkan jika tidak ingin mengubah gambar.</p>
+                        <div class="w-full">
+                            <input type="file" name="image" id="image" accept="image/*"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer">
+                            <p class="text-xs text-slate-400 mt-1">Format: JPEG, PNG, JPG, WEBP (Max 2MB). Kosongkan jika tidak ingin mengubah gambar.</p>
+                        </div>
+                    </div>
+                    @error('image')
+                        <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Baris 1: Judul Kampanye -->
                 <div>
-                    <label for="title" class="block text-slate-700 text-sm font-semibold mb-2">Nama / Judul
-                        Kampanye</label>
+                    <label for="title" class="block text-slate-700 text-sm font-semibold mb-2">Nama / Judul Kampanye</label>
                     <input type="text" name="title" id="title" value="{{ old('title', $campaign->title) }}"
                         class="w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition @error('title') border-red-500 @else border-slate-300 @enderror"
                         required placeholder="Contoh: Kampanye Kebaikan Bulan Mei 2026">
@@ -54,9 +57,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Target Periode Bulan -->
                     <div>
-                        <label for="month" class="block text-slate-700 text-sm font-semibold mb-2">Target Bulan
-                            Periode</label>
+                        <label for="month" class="block text-slate-700 text-sm font-semibold mb-2">Target Bulan Periode</label>
+                        <!-- Atribut min dikunci ke bulan terkecil antara bulan sekarang ATAU bulan bawaan data yang sedang diedit -->
+                        @php
+                            $minMonth = date('Y-m') < $campaign->month ? date('Y-m') : $campaign->month;
+                        @endphp
                         <input type="month" name="month" id="month" value="{{ old('month', $campaign->month) }}"
+                            min="{{ $minMonth }}"
                             class="w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition @error('month') border-red-500 @else border-slate-300 @enderror"
                             required>
                         @error('month')
@@ -64,17 +71,19 @@
                         @enderror
                     </div>
 
-                    <!-- Target Nominal Dana -->
+                    <!-- Target Nominal Dana dengan Masking Format Ribuan -->
                     <div>
-                        <label for="target_amount" class="block text-slate-700 text-sm font-semibold mb-2">Target Donasi
-                            Bulanan (Rupiah)</label>
+                        <label for="target_amount_display" class="block text-slate-700 text-sm font-semibold mb-2">Target Donasi Bulanan (Rupiah)</label>
                         <div class="relative flex items-center">
                             <span class="absolute left-4 text-slate-400 font-semibold text-sm">Rp</span>
-                            <input type="number" name="target_amount" id="target_amount"
-                                value="{{ old('target_amount', (int) $campaign->target_amount) }}" min="0"
-                                step="1000"
+                            
+                            <!-- Input Tampilan Visual Berformat Titik -->
+                            <input type="text" id="target_amount_display" 
                                 class="w-full pl-11 pr-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition @error('target_amount') border-red-500 @else border-slate-300 @enderror"
-                                required placeholder="Contoh: 50000000">
+                                placeholder="Contoh: 50.000.000" required>
+                            
+                            <!-- Input Utama Tersembunyi (Hanya Angka Murni) yang Masuk ke Database -->
+                            <input type="hidden" name="target_amount" id="target_amount" value="{{ old('target_amount', (int) $campaign->target_amount) }}">
                         </div>
                         @error('target_amount')
                             <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
@@ -82,19 +91,13 @@
                     </div>
                 </div>
 
-                <!-- Baris 3: Status Kampanye -->
+                <!-- Baris 3: Status Kampanye (Hanya Draft dan Active) -->
                 <div>
                     <label for="status" class="block text-slate-700 text-sm font-semibold mb-2">Status Publikasi</label>
                     <select name="status" id="status"
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                        <option value="draft" {{ old('status', $campaign->status) == 'draft' ? 'selected' : '' }}>Draft
-                            (Sembunyikan dulu)</option>
-                        <option value="upcoming" {{ old('status', $campaign->status) == 'upcoming' ? 'selected' : '' }}>
-                            Upcoming (Akan Datang / H-1 atau H-2 Bulan)</option>
-                        <option value="active" {{ old('status', $campaign->status) == 'active' ? 'selected' : '' }}>Active
-                            (Aktif / Buka Donasi)</option>
-                        <option value="completed" {{ old('status', $campaign->status) == 'completed' ? 'selected' : '' }}>
-                            Completed (Selesai)</option>
+                        <option value="draft" {{ old('status', $campaign->status) == 'draft' ? 'selected' : '' }}>Draft (Sembunyikan dulu)</option>
+                        <option value="active" {{ old('status', $campaign->status) == 'active' ? 'selected' : '' }}>Active (Aktif / Buka Donasi)</option>
                     </select>
                     @error('status')
                         <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
@@ -103,8 +106,7 @@
 
                 <!-- Baris 4: Deskripsi -->
                 <div>
-                    <label for="description" class="block text-slate-700 text-sm font-semibold mb-2">Deskripsi Kampanye
-                        (Opsional)</label>
+                    <label for="description" class="block text-slate-700 text-sm font-semibold mb-2">Deskripsi Kampanye (Opsional)</label>
                     <textarea name="description" id="description" rows="4"
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                         placeholder="Tulis ringkasan mengenai gambaran umum atau urgensi bantuan kampanye bulan ini...">{{ old('description', $campaign->description) }}</textarea>
@@ -127,4 +129,45 @@
             </form>
         </div>
     </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. LOGIC PREVIEW GAMBAR BARU
+            const imageInput = document.getElementById('image');
+            const previewContainer = document.getElementById('image-preview-container');
+            const previewImage = document.getElementById('image-preview');
+
+            imageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.setAttribute('src', e.target.result);
+                        previewContainer.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 2. LOGIC NUMBER FORMATTING (RUPIAH)
+            const displayInput = document.getElementById('target_amount_display');
+            const hiddenInput = document.getElementById('target_amount');
+
+            function formatNumber(value) {
+                return value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            displayInput.addEventListener('input', function(e) {
+                let rawValue = this.value.replace(/\D/g, "");
+                hiddenInput.value = rawValue;
+                this.value = formatNumber(rawValue);
+            });
+
+            // Isi format titik secara otomatis saat halaman pertama kali dimuat (Edit Mode)
+            if (hiddenInput.value) {
+                displayInput.value = formatNumber(hiddenInput.value);
+            }
+        });
+    </script>
 @endsection
