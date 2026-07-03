@@ -30,7 +30,7 @@ return new class extends Migration
             // Menghubungkan program ke wadah kampanye bulanan
             $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
             $table->string('program_name'); // Contoh: "Program Makan Bergizi"
-            $table->text('description')->nullable();
+            $table->text('description')->nullable(); // Deskripsi singkat tentang program
             $table->string('image_url')->nullable(); // Foto/Banner kegiatan program
             $table->timestamps();
         });
