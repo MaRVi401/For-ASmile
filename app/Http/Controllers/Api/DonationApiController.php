@@ -22,6 +22,118 @@ class DonationApiController extends Controller
     }
 
     /**
+     * API DAFTAR KAMPANYE (Untuk Beranda Mobile)
+     * Menampilkan semua kampanye beserta progress bar data nominal terkumpul
+     */
+    public function index()
+    {
+        try {
+            $campaigns = Campaign::with('programs')
+                ->withSum(['transactions' => function ($query) {
+                    $query->where('status', 'settlement');
+                }], 'amount')
+                ->latest()
+                ->get();
+
+            // Transformasi data untuk mempermudah pemrosesan di mobile app (Flutter/RN)
+            $formattedData = $campaigns->map(function ($campaign) {
+                $collected = $campaign->transactions_sum_amount ?? 0;
+                $target = $campaign->target_amount ?? 0;
+                $percentage = $target > 0 ? min(round(($collected / $target) * 100), 100) : 0;
+
+                return [
+                    'id' => $campaign->id,
+                    'title' => $campaign->title,
+                    'description' => $campaign->description,
+                    'image_url' => $campaign->image_url ? asset('storage/' . $campaign->image_url) : null,
+                    'target_amount' => $target,
+                    'total_collected' => $collected,
+                    'progress_percentage' => $percentage,
+                    'total_programs' => $campaign->programs->count(),
+                    'created_at' => $campaign->created_at,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Daftar kampanye berhasil diambil',
+                'data' => $formattedData
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil daftar kampanye: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * API DETAIL KAMPANYE & LAPORAN DANA (Untuk Halaman Detail Mobile)
+     * Menampilkan detail program kerja, total transparansi, dan riwayat penyaluran donasi
+     */
+    public function show($id)
+    {
+        try {
+            // Eager load seluruh relasi program, distribusi, dan penerima santunan
+            $campaign = Campaign::with(['programs', 'distributions.beneficiary'])
+                ->withSum(['transactions' => function ($query) {
+                    $query->where('status', 'settlement');
+                }], 'amount')
+                ->withSum('distributions', 'amount_distributed')
+                ->findOrFail($id);
+
+            $totalCollected = $campaign->transactions_sum_amount ?? 0;
+            $totalDistributed = $campaign->distributions_sum_amount_distributed ?? 0;
+            $balance = $totalCollected - $totalDistributed;
+
+            // Memformat data keluaran JSON yang bersih untuk dibaca Mobile Developer
+            $data = [
+                'campaign_details' => [
+                    'id' => $campaign->id,
+                    'title' => $campaign->title,
+                    'description' => $campaign->description,
+                    'image_url' => $campaign->image_url ? asset('storage/' . $campaign->image_url) : null,
+                    'target_amount' => $campaign->target_amount ?? 0,
+                ],
+                'transparency_report' => [
+                    'total_collected' => $totalCollected,
+                    'total_distributed' => $totalDistributed,
+                    'remaining_balance' => $balance,
+                ],
+                'programs' => $campaign->programs->map(function ($program) {
+                    return [
+                        'id' => $program->id,
+                        'program_name' => $program->program_name,
+                        'description' => $program->description,
+                        'image_url' => $program->image_url ? asset('storage/' . $program->image_url) : null,
+                    ];
+                }),
+                'distribution_history' => $campaign->distributions->map(function ($dist) {
+                    return [
+                        'id' => $dist->id,
+                        'amount_distributed' => $dist->amount_distributed,
+                        'beneficiary_name' => $dist->beneficiary->name ?? 'Penerima Umum',
+                        'notes' => $dist->notes ?? '-',
+                        'date' => $dist->created_at->format('d M Y'),
+                    ];
+                })
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Detail kampanye dan laporan keuangan berhasil dimuat',
+                'data' => $data
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memuat detail kampanye: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Membuat transaksi donasi baru via API (Checkout)
      */
     public function store(Request $request)
@@ -81,7 +193,6 @@ class DonationApiController extends Controller
                 'redirect_url' => $redirectUrl, // URL ini yang akan dibuka di WebView Flutter / Postman
                 'data' => $transaction
             ], 201);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -106,7 +217,6 @@ class DonationApiController extends Controller
                 'message' => 'Riwayat transaksi berhasil diambil',
                 'data' => $transactions
             ], 200);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

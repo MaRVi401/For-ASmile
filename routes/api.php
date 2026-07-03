@@ -17,6 +17,10 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 // Route Publik Midtrans Webhook
 Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handleNotification']);
 
+// Route Publik untuk Kampanye dan Donasi
+Route::get('/campaigns', [DonationApiController::class, 'index']);
+Route::get('/campaigns/{id}', [DonationApiController::class, 'show']);
+
 // Route Terproteksi (Wajib membawa Bearer Token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
