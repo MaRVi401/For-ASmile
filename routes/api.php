@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DonationApiController;
 use App\Http\Controllers\MidtransWebhookController;
+use App\Http\Controllers\Api\UserProfileController;
 
 // Route Publik (Tanpa Login)
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,6 +31,11 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    // Endpoint untuk update profil user yang sedang login
+    Route::post('/user/update', [UserProfileController::class, 'update']);
+
+
+    // Endpoint untuk membuat donasi baru dan melihat riwayat donasi
     Route::post('/donations', [DonationApiController::class, 'store']);
     Route::get('/donations/history', [DonationApiController::class, 'history']);
 });
