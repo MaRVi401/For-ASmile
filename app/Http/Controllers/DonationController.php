@@ -100,8 +100,20 @@ class DonationController extends Controller
 
     public function getDistributionModal($id)
     {
-        // Eager load untuk mengambil data distribusi beserta nama penerima manfaat
-        $campaign = Campaign::with(['distributions.beneficiary'])->findOrFail($id);
+        // 1. Ambil data campaign beserta kalkulasi sum transaksi sukses ('settlement') dan dana disalurkan
+        $campaign = Campaign::with(['distributions.beneficiary'])
+            ->withSum(['transactions' => function ($query) {
+                $query->where('status', 'settlement'); // Sesuaikan status sukses transaksi Midtrans Anda
+            }], 'amount')
+            ->withSum('distributions', 'amount_distributed')
+            ->findOrFail($id);
+
+        // 2. Petakan hasil sum ke properti yang dibaca oleh file distribution_content.blade.php
+        $campaign->total_collected = $campaign->transactions_sum_amount ?? 0;
+        $campaign->total_distributed = $campaign->distributions_sum_amount_distributed ?? 0;
+
+        // 3. Hitung sisa saldo
+        $campaign->balance = $campaign->total_collected - $campaign->total_distributed;
 
         // Render potongan HTML view khusus untuk isi modal
         return view('donations.partials.distribution_content', compact('campaign'))->render();

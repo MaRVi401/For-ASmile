@@ -11,7 +11,6 @@
 
 <body class="bg-slate-50 text-slate-800 antialiased font-sans">
 
-    <!-- Header / Navbar Minimalis -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -32,7 +31,6 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8 sm:py-12">
         <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
             <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">Mari Berbagi Senyuman</h1>
@@ -40,17 +38,15 @@
                 coba modul pembayaran sistem Midtrans Snap API.</p>
         </div>
 
-        <!-- Grid Cards Kampanye -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             @forelse($campaigns as $campaign)
                 <div
                     class="bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden flex flex-col hover:shadow-md transition duration-300 group">
 
-                    <!-- 1. BAGIAN GAMBAR DINAMIS (MEMASUKKAN KODE GAMBAR BARU DI SINI) -->
-                    <!-- Bagian Thumbnail Gambar pada welcome.blade.php -->
                     <div class="h-48 bg-slate-100 flex items-center justify-center relative overflow-hidden">
-                        @if($campaign->image)
-                            <img src="{{ asset('storage/' . $campaign->image) }}" alt="{{ $campaign->title }}"
+                        {{-- PERBAIKAN: Mengganti $campaign->image dengan $campaign->image_url sesuai nama kolom DB --}}
+                        @if($campaign->image_url)
+                            <img src="{{ asset('storage/' . $campaign->image_url) }}" alt="{{ $campaign->title }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500 ease-out"
                                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%25%22 height=%22100%25%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%232563eb%22/><text x=%2250%25%22 y=%2250%25%22 font-family=%22sans-serif%22 font-size=%2224%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.3em%22>❤️ For A Smile</text></svg>';">
                         @else
@@ -59,13 +55,12 @@
                                 <i class="ti ti-heart-handshake text-white text-5xl opacity-80"></i>
                             </div>
                         @endif
-                        <span
+                        {{-- <span
                             class="absolute top-3 left-3 bg-white/90 backdrop-blur-xs text-slate-700 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md shadow-xs">
-                            Program
-                        </span>
+                            For A Smile
+                        </span> --}}
                     </div>
 
-                    <!-- Card Body -->
                     <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between">
                         <div>
                             <h3 class="font-bold text-slate-900 text-lg leading-snug mb-2 line-clamp-2">
@@ -75,7 +70,6 @@
                                 {{ $campaign->description ?? 'Tidak ada deskripsi tambahan untuk kampanye ini.' }}
                             </p>
 
-                            <!-- 2. BAGIAN TARGET & TERKUMPUL (MEMASUKKAN KODE NOMINAL & PROGRESS BAR DI SINI) -->
                             <div class="mb-5 space-y-2">
                                 <div class="flex justify-between items-end text-xs sm:text-sm">
                                     <div>
@@ -92,7 +86,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Progress Bar Capaian -->
                                 @php
                                     $target = $campaign->target_amount ?? 0;
                                     $collected = $campaign->total_collected ?? 0;
@@ -111,7 +104,6 @@
                             </div>
                         </div>
 
-                        <!-- Button Action -->
                         <div class="pt-4 border-t border-slate-100 grid grid-cols-2 gap-2">
                             <a href="{{ route('donation.create', $campaign->id) }}"
                                 class="flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-3 rounded-xl transition cursor-pointer text-sm shadow-xs shadow-blue-600/10">
@@ -136,7 +128,6 @@
         </div>
     </main>
 
-    <!-- Modal Struktur -->
     <div id="webDistributionModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 relative">
             <button id="closeWebModal"
@@ -147,7 +138,6 @@
         </div>
     </div>
 
-    <!-- AJAX Script Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('webDistributionModal');

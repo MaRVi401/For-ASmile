@@ -15,7 +15,19 @@ use App\Http\Controllers\Admin\BeneficiaryController;
 use App\Models\Campaign;
 
 Route::get('/', function () {
-    $campaigns = Campaign::with('programs')->latest()->get();
+    // Ambil campaign aktif dan hitung total transaksi yang sukses ('settlement')
+    $campaigns = Campaign::with('programs')
+        ->withSum(['transactions' => function ($query) {
+            $query->where('status', 'settlement'); // Menghitung hanya transaksi yang sudah bayar
+        }], 'amount')
+        ->latest()
+        ->get();
+
+    // Map hasil perhitungan transactions_sum_amount ke properti total_collected
+    foreach ($campaigns as $campaign) {
+        $campaign->total_collected = $campaign->transactions_sum_amount ?? 0;
+    }
+
     return view('welcome', compact('campaigns'));
 });
 Route::get('/campaigns/{id}/distribution-modal', [DonationController::class, 'getDistributionModal'])
