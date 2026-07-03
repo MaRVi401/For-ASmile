@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             DonationSystemSeeder::class,
             TransactionSeeder::class,
             DashboardSeeder::class,
+            BeneficiaryAndDistributionSeeder::class,
         ]);
     }
 }
