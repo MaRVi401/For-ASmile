@@ -75,6 +75,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         'destroy' => 'admin.programs.destroy',
     ]);
 
+    // ==================== ROUTE EKSPOR LAPORAN TRANSAKSI ====================
+    Route::get('transactions/export-excel', [TransactionController::class, 'exportExcel'])->name('admin.transactions.exportExcel');
+    Route::get('transactions/export-pdf', [TransactionController::class, 'exportPdf'])->name('admin.transactions.exportPdf');
+
     // ==================== ROUTE LAPORAN TRANSAKSI ====================
     Route::resource('transactions', TransactionController::class)->only(['index', 'show'])->names([
         'index' => 'admin.transactions.index',
