@@ -18,6 +18,8 @@ Route::get('/', function () {
     $campaigns = Campaign::with('programs')->latest()->get();
     return view('welcome', compact('campaigns'));
 });
+Route::get('/campaigns/{id}/distribution-modal', [DonationController::class, 'getDistributionModal'])
+    ->name('campaigns.distribution-modal');
 
 // ==================== ROUTE DONASI ====================
 Route::middleware(['auth'])->group(function () {

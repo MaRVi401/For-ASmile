@@ -97,4 +97,13 @@ class DonationController extends Controller
             return back()->with('error', 'Gagal menghubungkan ke payment gateway: ' . $e->getMessage());
         }
     }
+
+    public function getDistributionModal($id)
+    {
+        // Eager load untuk mengambil data distribusi beserta nama penerima manfaat
+        $campaign = Campaign::with(['distributions.beneficiary'])->findOrFail($id);
+
+        // Render potongan HTML view khusus untuk isi modal
+        return view('donations.partials.distribution_content', compact('campaign'))->render();
+    }
 }
