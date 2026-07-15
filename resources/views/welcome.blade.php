@@ -32,8 +32,8 @@
             <div class="flex items-center gap-2">
                 @auth
                     <a href="{{ route('admin.dashboard') }}"
-                        class="text-xs sm:text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-2 sm:px-4 rounded-xl hover:bg-blue-100 transition inline-flex items-center gap-1">
-                        <i class="ti ti-dashboard text-sm sm:text-base"></i> <span class="hidden xs:inline">Admin Panel</span>
+                        class="text-xs sm:text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-2 sm:px-4 rounded-xl hover:bg-blue-100 transition inline-flex items-center">
+                        Admin Panel
                     </a>
                 @endauth
 
@@ -167,7 +167,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-14 space-y-1 sm:space-y-2">
                 <h2 class="text-xs font-bold text-blue-600 uppercase tracking-widest">Katalog Utama</h2>
-                <h3 class="text-xl sm:text-4xl font-black text-slate-900 tracking-tight">Salurkan Kebaikan Anda</h3>
+                <h3 class="text-xl sm:text-4xl font-black text-slate-900 tracking-tight">Laporan Donasi</h3>
                 <p class="text-slate-500 text-xs sm:text-sm">Geser untuk menjelajahi daftar kampanye kemanusiaan aktif dan agenda sub-program kerja bulan ini.</p>
             </div>
 
@@ -268,14 +268,18 @@
                                             </div>
 
                                             <!-- Button Action Grid -->
-                                            <div class="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 sm:gap-3">
-                                                <a href="{{ route('donation.create', $campaign->id) }}"
+                                            <div class="pt-3 border-t border-slate-100 grid grid-cols-1 gap-2 sm:gap-3">
+                                                {{-- <span class="flex items-center justify-center gap-1.5 bg-blue-600 text-white font-semibold py-2.5 px-2 rounded-xl text-xs sm:text-sm shadow-xs shadow-blue-600/10 w-full select-none">
+                                                    <i class="ti ti-mood-smile text-sm sm:text-base"></i> For A Smile
+                                                </span> --}}
+
+                                                {{-- <a href="{{ route('donation.create', $campaign->id) }}"
                                                     class="flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm shadow-xs shadow-blue-600/10">
                                                     <i class="ti ti-heart text-sm sm:text-base"></i> Donasi
-                                                </a>
+                                                </a> --}}
 
                                                 <button type="button"
-                                                    class="btn-web-distribusi flex items-center justify-center gap-1 border border-blue-600 hover:bg-blue-50 text-blue-600 font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm"
+                                                    class="btn-web-distribusi flex items-center justify-center gap-1.5 border border-blue-600 hover:bg-blue-50 text-blue-600 font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm w-full"
                                                     data-id="{{ $campaign->id }}">
                                                     <i class="ti ti-report-money text-sm sm:text-base"></i> Laporan Dana
                                                 </button>
