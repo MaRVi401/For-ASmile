@@ -30,6 +30,7 @@ Route::get('/', function () {
 
     return view('welcome', compact('campaigns'));
 });
+
 Route::get('/campaigns/{id}/distribution-modal', [DonationController::class, 'getDistributionModal'])
     ->name('campaigns.distribution-modal');
 
