@@ -28,7 +28,8 @@ class DonationApiController extends Controller
     public function index()
     {
         try {
-            $campaigns = Campaign::with('programs')
+            $campaigns = Campaign::where('status', 'active')
+                ->with('programs')
                 ->withSum(['transactions' => function ($query) {
                     $query->where('status', 'settlement');
                 }], 'amount')
