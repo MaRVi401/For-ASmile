@@ -273,10 +273,10 @@
                                                     <i class="ti ti-mood-smile text-sm sm:text-base"></i> For A Smile
                                                 </span> --}}
 
-                                                {{-- <a href="{{ route('donation.create', $campaign->id) }}"
+                                                <a href="{{ route('donation.create', $campaign->id) }}"
                                                     class="flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm shadow-xs shadow-blue-600/10">
                                                     <i class="ti ti-heart text-sm sm:text-base"></i> Donasi
-                                                </a> --}}
+                                                </a>
 
                                                 <button type="button"
                                                     class="btn-web-distribusi flex items-center justify-center gap-1.5 border border-blue-600 hover:bg-blue-50 text-blue-600 font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm w-full"
