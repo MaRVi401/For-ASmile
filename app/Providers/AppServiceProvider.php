@@ -23,8 +23,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Cara aman memeriksa apakah request datang dari ngrok
         if (
-            str_contains(request()->headers->get('X-Forwarded-Host', ''), 'ngrok-free.app') ||
-            str_contains(request()->header('host', ''), 'ngrok-free.app')
+            str_contains(request()->headers->get('X-Forwarded-Host', ''), 'ngrok-free.dev') ||
+            str_contains(request()->header('host', ''), 'ngrok-free.dev')
         ) {
 
             URL::forceScheme('https');

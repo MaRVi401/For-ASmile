@@ -24,56 +24,56 @@
         </div>
 
         <aside :class="mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-            class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col h-full shadow-xl z-50 lg:static lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            class="fixed inset-y-0 left-0 w-64 bg-amber-500 text-white flex flex-col h-full shadow-xl z-50 lg:static lg:translate-x-0 transition-transform duration-300 ease-in-out">
 
-            <div class="p-6 border-b border-slate-800 flex items-center justify-between lg:justify-center gap-3">
+            <div class="p-6 border-b border-amber-400 flex items-center justify-between lg:justify-center gap-3">
                 <div class="flex items-center gap-3">
                     <img src="{{ asset('assets/image/fas-logo.png') }}" alt="Logo E-Donasi"
                         class="h-10 w-auto object-contain">
                     <span class="text-lg font-bold tracking-wide text-white">For A Smile</span>
                 </div>
                 <button @click="mobileSidebarOpen = false"
-                    class="lg:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 cursor-pointer">
+                    class="lg:hidden text-amber-100 hover:text-white p-1 rounded-lg hover:bg-amber-600 cursor-pointer">
                     <i class="ti ti-x text-xl"></i>
                 </button>
             </div>
 
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
                 <a href="{{ route('admin.dashboard') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-amber-700 text-white shadow-md shadow-amber-900/30' : 'text-amber-50 hover:bg-amber-600 hover:text-white' }}">
                     <i class="ti ti-layout-dashboard text-xl"></i> Dashboard
                 </a>
 
                 <a href="{{ route('admin.campaigns.index') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.campaigns.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.campaigns.*') ? 'bg-amber-700 text-white shadow-md shadow-amber-900/30' : 'text-amber-50 hover:bg-amber-600 hover:text-white' }}">
                     <i class="ti ti-calendar-event text-xl"></i> Kelola Kampanye
                 </a>
 
                 <a href="{{ route('admin.programs.index') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.programs.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.programs.*') ? 'bg-amber-700 text-white shadow-md shadow-amber-900/30' : 'text-amber-50 hover:bg-amber-600 hover:text-white' }}">
                     <i class="ti ti-rocket text-xl"></i> Kelola Program
                 </a>
 
                 <a href="{{ route('admin.transactions.index') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.transactions.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.transactions.*') ? 'bg-amber-700 text-white shadow-md shadow-amber-900/30' : 'text-amber-50 hover:bg-amber-600 hover:text-white' }}">
                     <i class="ti ti-report-money text-xl"></i> Laporan Transaksi
                 </a>
                 <a href="{{ route('admin.beneficiaries.index') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.beneficiaries.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.beneficiaries.*') ? 'bg-amber-700 text-white shadow-md shadow-amber-900/30' : 'text-amber-50 hover:bg-amber-600 hover:text-white' }}">
                     <i class="ti ti-cookie-man text-xl"></i> Data Penerima
                 </a>
 
                 <a href="{{ route('admin.distributions.index') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition font-medium {{ request()->routeIs('admin.distributions.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30' : 'text-slate-400 hover:text-slate-200' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.distributions.*') ? 'bg-amber-700 text-white shadow-md shadow-amber-900/30' : 'text-amber-50 hover:bg-amber-600 hover:text-white' }}">
                     <i class="ti ti-moneybag-move text-xl"></i> Data Penyaluran
                 </a>
             </nav>
 
-            <div class="p-4 border-t border-slate-800">
+            <div class="p-4 border-t border-amber-400">
                 <form action="{{ route('admin.logout') }}" method="POST">
                     @csrf
                     <button type="submit"
-                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/10 hover:bg-red-600 text-red-400 hover:text-white rounded-xl transition font-medium text-sm cursor-pointer group">
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-red-600 text-white hover:text-white rounded-xl transition font-medium text-sm cursor-pointer group">
                         <i
                             class="ti ti-logout text-base group-hover:translate-x-0.5 transition-transform duration-200"></i>
                         Keluar / Logout
@@ -89,12 +89,12 @@
 
                 <div class="flex items-center gap-3">
                     <button @click="mobileSidebarOpen = true"
-                        class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 cursor-pointer transition-colors">
+                        class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-amber-50 hover:text-amber-600 cursor-pointer transition-colors">
                         <i class="ti ti-menu-2 text-2xl"></i>
                     </button>
 
                     <div class="text-sm font-medium text-slate-500 hidden sm:flex items-center gap-2">
-                        <i class="ti ti-clock-hour-4 text-slate-400 text-base"></i>
+                        <i class="ti ti-clock-hour-4 text-amber-500 text-base"></i>
                         Hari ini: <span
                             class="text-slate-800 font-semibold">{{ now()->translatedFormat('l, d F Y') }}</span>
                     </div>
@@ -108,7 +108,7 @@
                         </p>
                     </div>
                     <div
-                        class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-slate-300 shadow-xs select-none">
+                        class="w-10 h-10 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center font-bold text-amber-700 border border-amber-300 shadow-xs select-none">
                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
                     </div>
                 </div>
@@ -138,7 +138,7 @@
                                 title: 'Terjadi Kendala!',
                                 text: "{{ session('error') }}",
                                 confirmButtonText: 'Mengerti',
-                                confirmButtonColor: '#3b82f6',
+                                confirmButtonColor: '#f59e0b',
                                 customClass: {
                                     popup: 'rounded-2xl',
                                     confirmButton: 'rounded-xl px-5 py-2.5 font-medium'
