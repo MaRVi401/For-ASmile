@@ -42,6 +42,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Donatur yang masuk sistem
             $table->foreignId('campaign_id')->constrained()->onDelete('cascade'); // Donasi dikunci di tingkat Kampanye Bulanan
             $table->decimal('amount', 12, 2); // Nominal donasi dengan presisi desimal keuangan
+            $table->boolean('is_anonymous')->default(false); // Flag untuk donasi anonim
+            $table->text('notes')->nullable(); // Catatan tambahan dari donatur
             $table->string('payment_type')->nullable(); // Jenis pembayaran (gopay, shopeepay, bank_transfer, dll)
             $table->enum('status', ['pending', 'settlement', 'expire', 'cancel', 'failed'])->default('pending');
             $table->string('proof_of_payment')->nullable(); // Kolom pelengkap untuk upload bukti bayar jika diperlukan manual

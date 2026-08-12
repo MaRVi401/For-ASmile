@@ -31,12 +31,15 @@ class DonationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'campaign_id' => 'required|exists:campaigns,id',
-            'amount' => 'required|numeric|min:10000',
+            'campaign_id'  => 'required|exists:campaigns,id',
+            'amount'       => 'required|numeric|min:10000',
+            'is_anonymous' => 'nullable|boolean',
+            'notes'        => 'nullable|string|max:500',
         ]);
 
         $campaign = Campaign::findOrFail($request->campaign_id);
         $orderId = 'FAS-' . time() . '-' . rand(100, 999);
+        $isAnonymous = $request->boolean('is_anonymous');
 
         $params = [
             'transaction_details' => [
@@ -45,8 +48,8 @@ class DonationController extends Controller
             ],
             'expiry' => [
                 'start_time' => date('Y-m-d H:i:s O'),
-                'unit' => 'minute', // Bisa juga 'hour' atau 'day'
-                'duration' => 15, // Disarankan 15-60 menit agar user punya waktu transfer
+                'unit' => 'minute',
+                'duration' => 15,
             ],
             'item_details' => [
                 [
@@ -57,26 +60,26 @@ class DonationController extends Controller
                 ]
             ],
             'customer_details' => [
-                'first_name' => Auth::user()->name ?? 'Donatur Anonim',
+                // Jika dikirim anonim, kirim 'Hamba Allah' ke Midtrans
+                'first_name' => $isAnonymous ? 'Hamba Allah' : (Auth::user()->name ?? 'Donatur Anonim'),
                 'email' => Auth::user()->email ?? 'anonim@forasmile.org',
             ],
         ];
 
         try {
-            // 1. Dapatkan Snap Token dari Midtrans
             $snapToken = Snap::getSnapToken($params);
 
-            // 2. Simpan data transaksi ke database setelah sukses mendapatkan token
             $transaction = Transaction::create([
-                'order_id' => $orderId,
-                'user_id' => Auth::id(),
-                'campaign_id' => $campaign->id,
-                'amount' => $request->amount,
+                'order_id'     => $orderId,
+                'user_id'      => Auth::id(),
+                'campaign_id'  => $campaign->id,
+                'amount'       => $request->amount,
+                'is_anonymous' => $isAnonymous,
+                'notes'        => $request->notes,
                 'payment_type' => 'midtrans',
-                'status' => 'pending',
+                'status'       => 'pending',
             ]);
 
-            // PERUBAHAN DISINI: Jika request dikirim lewat AJAX/Fetch, return JSON
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -85,7 +88,6 @@ class DonationController extends Controller
                 ]);
             }
 
-            // Fallback jika diakses normal tanpa AJAX
             return view('donations.checkout', compact('transaction', 'snapToken', 'campaign'));
         } catch (Exception $e) {
             if ($request->expectsJson() || $request->ajax()) {

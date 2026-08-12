@@ -6,70 +6,83 @@ use App\Models\Campaign;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class TransactionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil data user biasa (bukan admin) untuk dijadikan donatur contoh
-        // Jika tidak ada user biasa, ambil user pertama yang tersedia
-        $donatur = User::where('is_admin', false)->first() ?? User::first();
-        
-        // Ambil kampanye yang aktif
-        $campaign = Campaign::where('status', 'active')->first() ?? Campaign::first();
+        // 1. Reset tabel transactions
+        Schema::disableForeignKeyConstraints();
+        Transaction::truncate();
+        Schema::enableForeignKeyConstraints();
 
-        if (!$donatur || !$campaign) {
+        $donaturs = User::where('is_admin', false)->get();
+        if ($donaturs->isEmpty()) {
+            $donaturs = User::all();
+        }
+
+        $campaigns = Campaign::all();
+
+        if ($donaturs->isEmpty() || $campaigns->isEmpty()) {
             $this->command->warn('Gagal membuat seeder transaksi: Pastikan seeder User dan Campaign sudah dijalankan terlebih dahulu!');
             return;
         }
 
-        // 1. Transaksi Contoh 1: Sukses via GoPay
-        Transaction::create([
-            'order_id' => 'FAS-' . time() . '-001',
-            'user_id' => $donatur->id,
-            'campaign_id' => $campaign->id,
-            'amount' => 150000,
-            'payment_type' => 'gopay',
-            'status' => 'settlement', // 'settlement' atau 'success' berarti berhasil di Midtrans
-            'proof_of_payment' => null,
-            'midtrans_transaction_id' => (string) Str::uuid(),
-        ]);
+        $paymentTypes = ['gopay', 'shopeepay', 'qris', 'bank_transfer_bca', 'bank_transfer_bni', 'echannel_mandiri'];
+        $statuses = ['settlement', 'settlement', 'settlement', 'pending', 'expire'];
+        $amounts = [25000, 50000, 100000, 150000, 250000, 500000, 1000000];
+        $notesSample = [
+            'Semoga berkah dan bermanfaat untuk sesama.',
+            'Bismillah, semoga dilapangkan rezekinya.',
+            'Doa terbaik untuk kelancaran program ini.',
+            'Semoga menjadi amal jariyah.',
+            null
+        ];
 
-        // 2. Transaksi Contoh 2: Pending via Bank Transfer (BCA)
-        Transaction::create([
-            'order_id' => 'FAS-' . (time() + 1) . '-002',
-            'user_id' => $donatur->id,
-            'campaign_id' => $campaign->id,
-            'amount' => 500000,
-            'payment_type' => 'bank_transfer_bca',
-            'status' => 'pending', // Masih menunggu pembayaran dari donatur
-            'proof_of_payment' => null,
-            'midtrans_transaction_id' => (string) Str::uuid(),
-        ]);
+        $counter = 100;
+        
+        // Kunci waktu saat ini (Hari Ini)
+        $today = Carbon::now();
 
-        // 3. Transaksi Contoh 3: Gagal / Expired via ShopeePay
-        Transaction::create([
-            'order_id' => 'FAS-' . (time() + 2) . '-003',
-            'user_id' => $donatur->id,
-            'campaign_id' => $campaign->id,
-            'amount' => 50000,
-            'payment_type' => 'shopeepay',
-            'status' => 'expire', // Waktu pembayaran habis / dibatalkan
-            'proof_of_payment' => null,
-            'midtrans_transaction_id' => (string) Str::uuid(),
-        ]);
+        foreach ($campaigns as $campaign) {
+            $transactionCount = rand(5, 8);
 
-        // 4. Transaksi Contoh 4: Sukses via Mandiri Bill
-        Transaction::create([
-            'order_id' => 'FAS-' . (time() + 3) . '-004',
-            'user_id' => $donatur->id,
-            'campaign_id' => $campaign->id,
-            'amount' => 1000000,
-            'payment_type' => 'echannel_mandiri',
-            'status' => 'settlement',
-            'proof_of_payment' => null,
-            'midtrans_transaction_id' => (string) Str::uuid(),
-        ]);
+            for ($i = 0; $i < $transactionCount; $i++) {
+                $counter++;
+                $selectedDonatur = $donaturs->random();
+                $selectedStatus = $statuses[array_rand($statuses)];
+                $selectedAmount = $amounts[array_rand($amounts)];
+                $selectedPayment = $paymentTypes[array_rand($paymentTypes)];
+
+                // Mengurangi waktu dari HARI INI secara bertahap ke belakang (0 s/d 7 hari lalu)
+                $daysAgo = rand(0, 7);
+                $hoursAgo = rand(0, 23);
+                $minutesAgo = rand(1, 59);
+
+                // Clone objek $today agar tidak mengubah variabel utama
+                $transactionDate = $today->copy()
+                    ->subDays($daysAgo)
+                    ->subHours($hoursAgo)
+                    ->subMinutes($minutesAgo);
+
+                Transaction::create([
+                    'order_id'                => 'FAS-' . $transactionDate->timestamp . '-' . $counter,
+                    'user_id'                 => $selectedDonatur->id,
+                    'campaign_id'             => $campaign->id,
+                    'amount'                  => $selectedAmount,
+                    'is_anonymous'            => (bool) rand(0, 1),
+                    'notes'                   => $notesSample[array_rand($notesSample)],
+                    'payment_type'            => $selectedPayment,
+                    'status'                  => $selectedStatus,
+                    'proof_of_payment'        => null,
+                    'midtrans_transaction_id' => (string) Str::uuid(),
+                    'created_at'              => $transactionDate,
+                    'updated_at'              => $transactionDate,
+                ]);
+            }
+        }
     }
 }

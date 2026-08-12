@@ -43,6 +43,26 @@
                     <p class="text-slate-400 text-xs mt-2">Minimal donasi Rp 10.000</p>
                 </div>
 
+                <!-- Checkbox Donasi Anonim -->
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" name="is_anonymous" id="is_anonymous" value="1"
+                        class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                    <label for="is_anonymous"
+                        class="text-xs sm:text-sm text-slate-700 font-medium cursor-pointer select-none">
+                        Sembunyikan nama saya (Donasi sebagai <strong>Hamba Allah</strong>)
+                    </label>
+                </div>
+
+                <!-- Textarea Pesan Doa / Dukungan -->
+                <div class="space-y-1.5 mt-3">
+                    <label for="notes" class="block text-xs sm:text-sm font-semibold text-slate-700">
+                        Pesan / Doa Kebaikan <span class="text-slate-400 font-normal">(Opsional)</span>
+                    </label>
+                    <textarea name="notes" id="notes" rows="3"
+                        placeholder="Tuliskan doa atau ucapan dukungan untuk program ini..."
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition resize-none bg-slate-50/50"></textarea>
+                </div>
+
                 <button type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition cursor-pointer text-sm shadow-xs shadow-blue-600/10 flex items-center justify-center gap-2">
                     Lanjutkan <i class="ti ti-arrow-right text-base"></i>
@@ -126,6 +146,13 @@
             const formData = new FormData();
             formData.append('campaign_id', document.getElementById('campaign_id').value);
             formData.append('amount', amountInput.value);
+            
+            const isAnonymousInput = document.getElementById('is_anonymous');
+            const notesInput = document.getElementById('notes');
+
+            formData.append('is_anonymous', isAnonymousInput.checked ? 1 : 0);
+            formData.append('notes', notesInput.value);
+
             formData.append('_token', '{{ csrf_token() }}' || document.querySelector('input[name="_token"]')
                 .value);
 

@@ -16,6 +16,8 @@ class Transaction extends Model
         'user_id',
         'campaign_id',
         'amount',
+        'is_anonymous',
+        'notes',
         'payment_type',
         'status',
         'proof_of_payment',
