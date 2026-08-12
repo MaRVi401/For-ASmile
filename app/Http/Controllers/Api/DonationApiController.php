@@ -59,8 +59,10 @@ class DonationApiController extends Controller
                     'total_programs' => $campaign->programs->count(),
                     'recent_donors' => $campaign->transactions->map(function ($trx) {
                         return [
-                            'donor_name' => $trx->user->name ?? 'Hamba Allah',
+                            // Perbaikan: Cek status is_anonymous
+                            'donor_name' => $trx->is_anonymous ? 'Hamba Allah' : ($trx->user->name ?? 'Hamba Allah'),
                             'amount' => $trx->amount,
+                            'notes' => $trx->notes, // Perbaikan: Sertakan doa/pesan
                             'date' => $trx->created_at->format('d M Y, H:i'),
                         ];
                     }),
@@ -83,7 +85,6 @@ class DonationApiController extends Controller
 
     /**
      * API DETAIL KAMPANYE & LAPORAN DANA (Untuk Halaman Detail Mobile)
-     * Menampilkan detail program kerja, total transparansi, dan riwayat penyaluran donasi
      */
     public function show($id)
     {
@@ -159,14 +160,20 @@ class DonationApiController extends Controller
      */
     public function store(Request $request)
     {
+        // Perbaikan: Tambahkan validasi is_anonymous dan notes
         $request->validate([
-            'campaign_id' => 'required|exists:campaigns,id',
-            'amount' => 'required|numeric|min:10000',
+            'campaign_id'  => 'required|exists:campaigns,id',
+            'amount'       => 'required|numeric|min:10000',
+            'is_anonymous' => 'nullable|boolean',
+            'notes'        => 'nullable|string|max:500',
         ]);
 
         try {
             $campaign = Campaign::findOrFail($request->campaign_id);
             $orderId = 'FAS-' . time() . '-' . rand(100, 999);
+            
+            // Perbaikan: Ambil boolean value untuk is_anonymous
+            $isAnonymous = $request->boolean('is_anonymous');
 
             $params = [
                 'transaction_details' => [
@@ -187,7 +194,8 @@ class DonationApiController extends Controller
                     ]
                 ],
                 'customer_details' => [
-                    'first_name' => Auth::user()->name ?? 'Donatur Anonim',
+                    // Perbaikan: Jika is_anonymous true, set first_name sebagai Hamba Allah
+                    'first_name' => $isAnonymous ? 'Hamba Allah' : (Auth::user()->name ?? 'Donatur Anonim'),
                     'email' => Auth::user()->email ?? 'anonim@forasmile.org',
                 ],
             ];
@@ -196,21 +204,24 @@ class DonationApiController extends Controller
             $snapToken = $snapResponse->token;
             $redirectUrl = $snapResponse->redirect_url;
 
+            // Perbaikan: Simpan is_anonymous dan notes
             $transaction = Transaction::create([
-                'order_id' => $orderId,
-                'user_id' => Auth::id(),
-                'campaign_id' => $campaign->id,
-                'amount' => $request->amount,
+                'order_id'     => $orderId,
+                'user_id'      => Auth::id(),
+                'campaign_id'  => $campaign->id,
+                'amount'       => $request->amount,
+                'is_anonymous' => $isAnonymous,
+                'notes'        => $request->notes,
                 'payment_type' => 'midtrans',
-                'status' => 'pending',
+                'status'       => 'pending',
             ]);
 
             return response()->json([
-                'success' => true,
-                'message' => 'Transaksi donasi berhasil dibuat',
-                'snap_token' => $snapToken,
+                'success'      => true,
+                'message'      => 'Transaksi donasi berhasil dibuat',
+                'snap_token'   => $snapToken,
                 'redirect_url' => $redirectUrl,
-                'data' => $transaction
+                'data'         => $transaction
             ], 201);
         } catch (Exception $e) {
             return response()->json([
