@@ -32,9 +32,9 @@ class DonationApiController extends Controller
                 ->with('programs')
                 ->with(['transactions' => function ($query) {
                     $query->where('status', 'settlement')
-                          ->orderBy('created_at', 'desc')
-                          ->take(5)
-                          ->with('user');
+                        ->orderBy('created_at', 'desc')
+                        ->take(5)
+                        ->with('user');
                 }])
                 ->withSum(['transactions' => function ($query) {
                     $query->where('status', 'settlement');
@@ -58,12 +58,17 @@ class DonationApiController extends Controller
                     'progress_percentage' => $percentage,
                     'total_programs' => $campaign->programs->count(),
                     'recent_donors' => $campaign->transactions->map(function ($trx) {
+                        $userAvatar = $trx->user ? $trx->user->avatar : null;
+                        $avatarUrl = (!$trx->is_anonymous && $userAvatar)
+                            ? asset('storage/' . $userAvatar)
+                            : null;
+
                         return [
-                            // Perbaikan: Cek status is_anonymous
                             'donor_name' => $trx->is_anonymous ? 'Hamba Allah' : ($trx->user->name ?? 'Hamba Allah'),
-                            'amount' => $trx->amount,
-                            'notes' => $trx->notes, // Perbaikan: Sertakan doa/pesan
-                            'date' => $trx->created_at->format('d M Y, H:i'),
+                            'amount'     => $trx->amount,
+                            'notes'      => $trx->notes,
+                            'avatar_url' => $avatarUrl,
+                            'date'       => $trx->created_at->format('d M Y, H:i'),
                         ];
                     }),
                     'created_at' => $campaign->created_at,
@@ -95,11 +100,11 @@ class DonationApiController extends Controller
                     $query->orderBy('distributed_at', 'desc')->with('beneficiary');
                 }
             ])
-            ->withSum(['transactions' => function ($query) {
-                $query->where('status', 'settlement');
-            }], 'amount')
-            ->withSum('distributions', 'amount_distributed')
-            ->findOrFail($id);
+                ->withSum(['transactions' => function ($query) {
+                    $query->where('status', 'settlement');
+                }], 'amount')
+                ->withSum('distributions', 'amount_distributed')
+                ->findOrFail($id);
 
             $totalCollected = $campaign->transactions_sum_amount ?? 0;
             $totalDistributed = $campaign->distributions_sum_amount_distributed ?? 0;
@@ -146,7 +151,6 @@ class DonationApiController extends Controller
                 'message' => 'Detail kampanye dan laporan keuangan berhasil dimuat',
                 'data' => $data
             ], 200);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -171,7 +175,7 @@ class DonationApiController extends Controller
         try {
             $campaign = Campaign::findOrFail($request->campaign_id);
             $orderId = 'FAS-' . time() . '-' . rand(100, 999);
-            
+
             // Perbaikan: Ambil boolean value untuk is_anonymous
             $isAnonymous = $request->boolean('is_anonymous');
 
