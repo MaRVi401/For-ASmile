@@ -12,6 +12,7 @@ class Distribution extends Model
         'beneficiary_id',
         'amount_distributed',
         'notes',
+        'documentation_image',
         'distributed_at',
     ];
 

@@ -23,20 +23,26 @@ class DonationApiController extends Controller
 
     /**
      * API DAFTAR KAMPANYE (Untuk Beranda Mobile)
-     * Menampilkan semua kampanye beserta progress bar data nominal terkumpul
+     * Menampilkan semua kampanye, progress bar, nominal terkumpul & 5 donatur terakhir
      */
     public function index()
     {
         try {
             $campaigns = Campaign::where('status', 'active')
                 ->with('programs')
+                ->with(['transactions' => function ($query) {
+                    $query->where('status', 'settlement')
+                          ->orderBy('created_at', 'desc')
+                          ->take(5)
+                          ->with('user');
+                }])
                 ->withSum(['transactions' => function ($query) {
                     $query->where('status', 'settlement');
                 }], 'amount')
                 ->latest()
                 ->get();
 
-            // Transformasi data untuk mempermudah pemrosesan di mobile app (Flutter/RN)
+            // Transformasi data untuk mobile app
             $formattedData = $campaigns->map(function ($campaign) {
                 $collected = $campaign->transactions_sum_amount ?? 0;
                 $target = $campaign->target_amount ?? 0;
@@ -51,6 +57,13 @@ class DonationApiController extends Controller
                     'total_collected' => $collected,
                     'progress_percentage' => $percentage,
                     'total_programs' => $campaign->programs->count(),
+                    'recent_donors' => $campaign->transactions->map(function ($trx) {
+                        return [
+                            'donor_name' => $trx->user->name ?? 'Hamba Allah',
+                            'amount' => $trx->amount,
+                            'date' => $trx->created_at->format('d M Y, H:i'),
+                        ];
+                    }),
                     'created_at' => $campaign->created_at,
                 ];
             });
@@ -75,19 +88,22 @@ class DonationApiController extends Controller
     public function show($id)
     {
         try {
-            // Eager load seluruh relasi program, distribusi, dan penerima santunan
-            $campaign = Campaign::with(['programs', 'distributions.beneficiary'])
-                ->withSum(['transactions' => function ($query) {
-                    $query->where('status', 'settlement');
-                }], 'amount')
-                ->withSum('distributions', 'amount_distributed')
-                ->findOrFail($id);
+            $campaign = Campaign::with([
+                'programs',
+                'distributions' => function ($query) {
+                    $query->orderBy('distributed_at', 'desc')->with('beneficiary');
+                }
+            ])
+            ->withSum(['transactions' => function ($query) {
+                $query->where('status', 'settlement');
+            }], 'amount')
+            ->withSum('distributions', 'amount_distributed')
+            ->findOrFail($id);
 
             $totalCollected = $campaign->transactions_sum_amount ?? 0;
             $totalDistributed = $campaign->distributions_sum_amount_distributed ?? 0;
             $balance = $totalCollected - $totalDistributed;
 
-            // Memformat data keluaran JSON yang bersih untuk dibaca Mobile Developer
             $data = [
                 'campaign_details' => [
                     'id' => $campaign->id,
@@ -110,12 +126,16 @@ class DonationApiController extends Controller
                     ];
                 }),
                 'distribution_history' => $campaign->distributions->map(function ($dist) {
+                    $distributedAt = \Carbon\Carbon::parse($dist->distributed_at);
+
                     return [
                         'id' => $dist->id,
                         'amount_distributed' => $dist->amount_distributed,
                         'beneficiary_name' => $dist->beneficiary->name ?? 'Penerima Umum',
                         'notes' => $dist->notes ?? '-',
-                        'date' => $dist->created_at->format('d M Y'),
+                        'documentation_image_url' => $dist->documentation_image ? asset('storage/' . $dist->documentation_image) : null,
+                        'distributed_at' => $distributedAt->format('d M Y, H:i') . ' WIB',
+                        'date' => $distributedAt->format('d M Y'),
                     ];
                 })
             ];
@@ -156,7 +176,7 @@ class DonationApiController extends Controller
                 'expiry' => [
                     'start_time' => date('Y-m-d H:i:s O'),
                     'unit' => 'minute',
-                    'duration' => 15, // Waktu kedaluwarsa pembayaran (15 menit)
+                    'duration' => 15,
                 ],
                 'item_details' => [
                     [
@@ -172,12 +192,10 @@ class DonationApiController extends Controller
                 ],
             ];
 
-            // Request token ke Midtrans
             $snapResponse = Snap::createTransaction($params);
             $snapToken = $snapResponse->token;
             $redirectUrl = $snapResponse->redirect_url;
 
-            // Simpan data ke tabel transactions dengan status awal pending
             $transaction = Transaction::create([
                 'order_id' => $orderId,
                 'user_id' => Auth::id(),
@@ -191,7 +209,7 @@ class DonationApiController extends Controller
                 'success' => true,
                 'message' => 'Transaksi donasi berhasil dibuat',
                 'snap_token' => $snapToken,
-                'redirect_url' => $redirectUrl, // URL ini yang akan dibuka di WebView Flutter / Postman
+                'redirect_url' => $redirectUrl,
                 'data' => $transaction
             ], 201);
         } catch (Exception $e) {

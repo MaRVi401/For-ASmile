@@ -15,15 +15,18 @@ use App\Http\Controllers\Admin\BeneficiaryController;
 use App\Models\Campaign;
 
 Route::get('/', function () {
-    // Ambil campaign aktif dan hitung total transaksi yang sukses ('settlement')
-    $campaigns = Campaign::with('programs')
+    $campaigns = Campaign::with(['programs', 'transactions' => function ($query) {
+        $query->where('status', 'settlement')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->with('user');
+    }])
         ->withSum(['transactions' => function ($query) {
-            $query->where('status', 'settlement'); // Menghitung hanya transaksi yang sudah bayar
+            $query->where('status', 'settlement');
         }], 'amount')
         ->latest()
         ->get();
 
-    // Map hasil perhitungan transactions_sum_amount ke properti total_collected
     foreach ($campaigns as $campaign) {
         $campaign->total_collected = $campaign->transactions_sum_amount ?? 0;
     }

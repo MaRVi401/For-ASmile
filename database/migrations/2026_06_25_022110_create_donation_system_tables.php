@@ -66,6 +66,7 @@ return new class extends Migration
             $table->decimal('amount_distributed', 12, 2);
             $table->timestamp('distributed_at')->useCurrent();
             $table->text('notes')->nullable();
+            $table->string('documentation_image')->nullable(); // Foto dokumentasi distribusi
             $table->timestamps();
         });
     }

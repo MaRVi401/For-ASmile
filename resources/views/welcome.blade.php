@@ -76,7 +76,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                     <a href="#kampanye" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-blue-600/10 transition text-center text-sm">
-                        Mulai Berdonasi
+                        Kampanye Kami
                     </a>
                     <a href="#tentang" class="border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-3 px-6 rounded-xl transition text-center text-sm">
                         Pelajari Visi Kami
@@ -162,7 +162,7 @@
         </div>
     </section>
 
-    <!-- 5. CAROUSEL DONASI RESPONSIVE (FLEX LAYOUT & MAX ARROW SPACE) -->
+    <!-- 5. CAROUSEL DONASI RESPONSIVE -->
     <section id="kampanye" class="bg-slate-100 py-12 sm:py-24 border-y border-slate-200/60 shadow-inner">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-14 space-y-1 sm:space-y-2">
@@ -187,7 +187,7 @@
                                 <div class="w-full flex-shrink-0 px-1 sm:px-3">
                                     <div class="flex flex-col lg:flex-row group gap-4 sm:gap-6">
 
-                                        <!-- Cover Image (Responsive Scale) -->
+                                        <!-- Cover Image -->
                                         <div class="h-44 sm:h-56 lg:h-auto lg:w-5/12 bg-slate-100 flex items-center justify-center relative overflow-hidden rounded-xl flex-shrink-0 border border-slate-100">
                                             @if($campaign->image_url)
                                                 <img src="{{ asset('storage/' . $campaign->image_url) }}" alt="{{ $campaign->title }}"
@@ -200,7 +200,7 @@
                                             @endif
                                         </div>
 
-                                        <!-- Content (Responsive Padding & Font Sizing) -->
+                                        <!-- Content -->
                                         <div class="flex-1 flex flex-col justify-between py-1 space-y-4">
                                             <div>
                                                 <h3 class="font-bold text-slate-900 text-base sm:text-xl leading-snug mb-1.5 line-clamp-2">
@@ -238,6 +238,36 @@
                                                     @endif
                                                 </div>
 
+                                                <!-- PENAMBAHAN: 5 Donatur Terakhir -->
+                                                <div class="mb-3.5 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1">
+                                                            <i class="ti ti-users text-xs text-blue-600"></i> Donatur Terakhir:
+                                                        </span>
+                                                    </div>
+                                                    @if($campaign->transactions->isEmpty())
+                                                        <p class="text-[11px] text-slate-400 italic">Belum ada donasi masuk bulan ini.</p>
+                                                    @else
+                                                        <ul class="space-y-1.5 max-h-24 overflow-y-auto pr-1">
+                                                            @foreach($campaign->transactions as $trx)
+                                                                <li class="text-[11px] sm:text-xs flex items-center justify-between gap-2 border-b border-slate-100/80 pb-1 last:border-0 last:pb-0">
+                                                                    <div class="flex items-center gap-1.5 min-w-0">
+                                                                        <div class="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold shrink-0">
+                                                                            {{ strtoupper(substr($trx->user->name ?? 'H', 0, 1)) }}
+                                                                        </div>
+                                                                        <span class="font-medium text-slate-700 truncate">
+                                                                            {{ $trx->user->name ?? 'Hamba Allah' }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <span class="font-bold text-emerald-600 text-[10px] sm:text-[11px] shrink-0">
+                                                                        +Rp{{ number_format($trx->amount, 0, ',', '.') }}
+                                                                    </span>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                </div>
+
                                                 <!-- Progress Pengumpulan Dana -->
                                                 <div class="space-y-1.5">
                                                     <div class="flex justify-between items-end text-[11px] sm:text-sm">
@@ -269,20 +299,16 @@
 
                                             <!-- Button Action Grid -->
                                             <div class="pt-3 border-t border-slate-100 grid grid-cols-1 gap-2 sm:gap-3">
-                                                {{-- <span class="flex items-center justify-center gap-1.5 bg-blue-600 text-white font-semibold py-2.5 px-2 rounded-xl text-xs sm:text-sm shadow-xs shadow-blue-600/10 w-full select-none">
-                                                    <i class="ti ti-mood-smile text-sm sm:text-base"></i> For A Smile
-                                                </span> --}}
-
-                                                <a href="{{ route('donation.create', $campaign->id) }}"
-                                                    class="flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm shadow-xs shadow-blue-600/10">
-                                                    <i class="ti ti-heart text-sm sm:text-base"></i> Donasi
-                                                </a>
-
                                                 <button type="button"
                                                     class="btn-web-distribusi flex items-center justify-center gap-1.5 border border-blue-600 hover:bg-blue-50 text-blue-600 font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm w-full"
                                                     data-id="{{ $campaign->id }}">
                                                     <i class="ti ti-report-money text-sm sm:text-base"></i> Laporan Dana
                                                 </button>
+
+                                                <a href="{{ route('donation.create', $campaign->id) }}"
+                                                    class="flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-2 rounded-xl transition cursor-pointer text-xs sm:text-sm shadow-xs shadow-blue-600/10">
+                                                    <i class="ti ti-heart text-sm sm:text-base"></i> Donasi
+                                                </a>
                                             </div>
                                         </div>
 
@@ -293,7 +319,7 @@
                         </div>
                     </div>
 
-                    <!-- Arrow Controls (Di luar area card pada desktop, pas di margin pada mobile) -->
+                    <!-- Arrow Controls -->
                     <button @click="prev()" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 sm:-translate-x-4 bg-white hover:bg-slate-50 text-slate-700 w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-md border border-slate-200 z-10 transition cursor-pointer text-xs sm:text-base">
                         ❮
                     </button>
@@ -382,7 +408,7 @@
         </div>
     </section>
 
-    <!-- 8. MODAL RESPONSIVE 1: LAPORAN TRANSMARANSI DISTRIBUSI DANA -->
+    <!-- 8. MODAL RESPONSIVE 1: LAPORAN TRANSARANSI DISTRIBUSI DANA -->
     <div id="webDistributionModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-3 sm:p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-5 sm:p-6 relative max-h-[90vh] overflow-y-auto">
             <button id="closeWebModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl font-bold cursor-pointer">&times;</button>

@@ -29,8 +29,9 @@
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 text-xs font-bold uppercase tracking-wider">
                             <th class="px-6 py-4" style="width: 5%">No</th>
-                            <th class="px-6 py-4" style="width: 25%">Penerima Santunan</th>
-                            <th class="px-6 py-4" style="width: 25%">Keterangan Kampanye</th>
+                            <th class="px-6 py-4" style="width: 20%">Penerima Santunan</th>
+                            <th class="px-6 py-4" style="width: 20%">Keterangan Kampanye</th>
+                            <th class="px-6 py-4" style="width: 10%">Bukti Foto</th>
                             <th class="px-6 py-4" style="width: 15%">Nominal Saluran</th>
                             <th class="px-6 py-4" style="width: 15%">Waktu Distribusi</th>
                             <th class="px-6 py-4 text-right" style="width: 15%">Aksi</th>
@@ -59,6 +60,25 @@
                                         {{ $dist->campaign->title }}
                                     </p>
                                 </td>
+
+                                {{-- MODIFIKASI: Kolom Tampilan Foto Dokumentasi --}}
+                                <td class="px-6 py-4">
+                                    @if($dist->documentation_image)
+                                        <a href="{{ asset('storage/' . $dist->documentation_image) }}" target="_blank" class="group relative inline-block">
+                                            <img src="{{ asset('storage/' . $dist->documentation_image) }}" 
+                                                 alt="Bukti Dokumentasi" 
+                                                 class="w-12 h-12 object-cover rounded-xl border border-slate-200 shadow-xs group-hover:opacity-80 transition">
+                                            <span class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-slate-900/30 text-white rounded-xl text-xs">
+                                                <i class="ti ti-eye"></i>
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-normal bg-slate-100 text-slate-400">
+                                            <i class="ti ti-photo-off"></i> Tanpa Foto
+                                        </span>
+                                    @endif
+                                </td>
+
                                 <td class="px-6 py-4">
                                     <p class="text-blue-600 font-bold">
                                         Rp {{ number_format($dist->amount_distributed, 0, ',', '.') }}
@@ -89,7 +109,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                                <td colspan="7" class="px-6 py-12 text-center text-slate-400">
                                     <div class="flex flex-col items-center justify-center space-y-2">
                                         <i class="ti ti-folder-off text-4xl text-slate-300"></i>
                                         <p class="text-base font-semibold text-slate-500">Belum Ada Catatan Penyaluran</p>
