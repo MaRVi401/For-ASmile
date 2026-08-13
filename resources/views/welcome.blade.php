@@ -216,14 +216,25 @@
                                 <div class="w-full flex-shrink-0 px-1 sm:px-3">
                                     <div class="flex flex-col lg:flex-row group gap-4 sm:gap-6">
 
-                                        <!-- Cover Image -->
+                                        <!-- Cover Image (Rapi & Adaptive) -->
                                         <div
-                                            class="h-44 sm:h-56 lg:h-auto lg:w-5/12 bg-slate-100 flex items-center justify-center relative overflow-hidden rounded-xl flex-shrink-0 border border-slate-100">
+                                            class="w-full lg:w-5/12 aspect-[4/3] bg-slate-900 flex items-center justify-center relative overflow-hidden rounded-xl flex-shrink-0 border border-slate-200/80 group/img">
                                             @if ($campaign->image_url)
-                                                <img src="{{ asset('storage/' . $campaign->image_url) }}"
-                                                    alt="{{ $campaign->title }}"
-                                                    class="w-full h-full object-cover group-hover:scale-102 transition duration-500 ease-out"
-                                                    onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%25%22 height=%22100%25%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%232563eb%22/><text x=%2250%25%22 y=%2250%25%22 font-family=%22sans-serif%22 font-size=%2224%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.3em%22>❤️ For A Smile</text></svg>';">
+                                                @php
+                                                    $fullImgPath = asset('storage/' . $campaign->image_url);
+                                                @endphp
+
+                                                <!-- 1. Background Blur (Mengisi ruang kosong gambar portrait/landscape) -->
+                                                <div class="absolute inset-0 bg-cover bg-center scale-110 blur-xl opacity-40"
+                                                    style="background-image: url('{{ $fullImgPath }}');"></div>
+
+                                                <!-- 2. Overlay halus agar tampilan menyatu -->
+                                                <div class="absolute inset-0 bg-slate-900/20"></div>
+
+                                                <!-- 3. Gambar Utama (Tampil Utuh Tanpa Terpotong) -->
+                                                <img src="{{ $fullImgPath }}" alt="{{ $campaign->title }}"
+                                                    class="relative z-10 max-w-full max-h-full object-contain p-1 group-hover/img:scale-105 transition duration-500 ease-out drop-shadow-md"
+                                                    onerror="this.onerror=null; this.parentElement.innerHTML='<div class=%22w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-6%22><i class=%22ti ti-heart-handshake text-white text-5xl opacity-80%22></i></div>';">
                                             @else
                                                 <div
                                                     class="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-6">

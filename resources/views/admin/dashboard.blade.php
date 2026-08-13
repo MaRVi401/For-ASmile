@@ -84,7 +84,7 @@
                                         </div>
                                         <div class="flex-1 min-w-0 pt-0.5">
                                             <p class="text-xs font-bold text-slate-800 truncate">
-                                                {{ $donation->user->name ?? 'Donatur Anonim' }}
+                                                {{ $donation->is_anonymous ? 'Hamba Allah' : $donation->user->name ?? 'Donatur Anonim' }}
                                             </p>
                                             <p class="text-[11px] text-slate-400 truncate mt-0.5">
                                                 Kampanye: <span
