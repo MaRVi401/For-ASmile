@@ -71,11 +71,11 @@
         <div
             class="max-w-7xl mx-auto px-4 py-10 sm:py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div class="space-y-4 sm:space-y-6 text-center lg:text-left order-last lg:order-first">
-                <div
+                {{-- <div
                     class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider">
                     <i class="ti ti-circle-check-filled animate-pulse text-xs sm:text-sm"></i> Akuntabilitas Sistem
                     Terverifikasi
-                </div>
+                </div> --}}
                 <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
                     Mengubah Kepedulian Menjadi <span class="text-blue-600">Senyuman Nyata</span>
                 </h1>
@@ -96,25 +96,54 @@
             </div>
 
             <div class="relative flex justify-center order-first lg:order-last">
+                <!-- Glow Effect Latar Belakang -->
                 <div
-                    class="absolute -inset-4 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-3xl blur-2xl opacity-10 transform -rotate-3">
+                    class="absolute -inset-2 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-3xl blur-2xl opacity-20 transform -rotate-2">
                 </div>
+
+                <!-- Main Card Container -->
                 <div
-                    class="relative w-full max-w-md bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-xl text-white p-6 sm:p-8 overflow-hidden min-h-[220px] sm:min-h-[300px] flex flex-col justify-between">
-                    <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-white/5 rounded-full blur-xl"></div>
-                    <div class="flex justify-between items-start">
-                        <i class="ti ti-heart-handshake text-4xl sm:text-5xl text-blue-100 opacity-90"></i>
+                    class="relative w-full max-w-md bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl shadow-2xl text-white p-5 sm:p-7 overflow-hidden border border-white/10 flex flex-col justify-between">
+
+                    <!-- Ornamen Lingkaran Transparan -->
+                    <div
+                        class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none">
+                    </div>
+
+                    <!-- Header Card: Icon & Badge -->
+                    <div class="flex justify-between items-center z-10 mb-5">
+                        <div
+                            class="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
+                            <i class="ti ti-heart-handshake text-2xl sm:text-3xl text-blue-100"></i>
+                        </div>
                         <span
-                            class="text-[10px] sm:text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium tracking-wide">Midtrans
-                            Sandbox Active</span>
+                            class="text-[10px] sm:text-xs bg-white/15 backdrop-blur-md text-blue-50 border border-white/20 px-3 py-1 rounded-full font-medium tracking-wide">
+                            Midtrans Sandbox Active
+                        </span>
                     </div>
-                    <div class="space-y-1 sm:space-y-2 mt-6 sm:mt-8">
-                        <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight">Gotong Royong Modern</h3>
-                        <p class="text-xs sm:text-sm text-blue-100/95 leading-relaxed">
-                            Setiap donasi masuk divalidasi otomatis oleh sistem Midtrans Snap API dan dialokasikan ke
-                            program kerja bulanan yang terukur.
-                        </p>
+
+                    <!-- Body Card: Gambar & Deskripsi -->
+                    <div class="space-y-4 z-10">
+                        <!-- Frame Gambar Hero -->
+                        <div
+                            class="relative overflow-hidden rounded-2xl border border-white/20 shadow-md aspect-[16/10] group">
+                            <img src="{{ asset('assets/image/hero-right.jpeg') }}" alt="Gotong Royong Modern"
+                                class="w-full h-full object-cover group-hover:scale-105 transition duration-500 ease-out"
+                                onerror="this.onerror=null; this.src='https://placehold.co/600x400/2563eb/FFF?text=Gotong+Royong+Modern';">
+                        </div>
+
+                        <!-- Teks Deskripsi -->
+                        <div class="space-y-1.5 pt-1">
+                            <h3 class="text-lg sm:text-xl font-bold tracking-tight text-white leading-snug">
+                                Gotong Royong Modern
+                            </h3>
+                            <p class="text-xs sm:text-sm text-blue-100/90 leading-relaxed font-normal">
+                                Setiap donasi masuk divalidasi otomatis oleh sistem Midtrans Snap API dan dialokasikan
+                                ke program kerja bulanan yang terukur.
+                            </p>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -490,6 +519,7 @@
             </div>
 
             <div x-data="{ activeFaq: null }" class="space-y-3">
+                <!-- FAQ 1 -->
                 <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
                     <button @click="activeFaq = (activeFaq === 1 ? null : 1)"
                         class="w-full text-left p-3.5 sm:p-4 font-bold text-xs sm:text-base flex justify-between items-center text-slate-800 cursor-pointer gap-2">
@@ -505,6 +535,7 @@
                     </div>
                 </div>
 
+                <!-- FAQ 2 -->
                 <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
                     <button @click="activeFaq = (activeFaq === 2 ? null : 2)"
                         class="w-full text-left p-3.5 sm:p-4 font-bold text-xs sm:text-base flex justify-between items-center text-slate-800 cursor-pointer gap-2">
@@ -515,8 +546,55 @@
                     <div x-show="activeFaq === 2" x-collapse
                         class="p-3.5 sm:p-4 pt-0 text-xs sm:text-sm text-slate-500 leading-relaxed border-t border-slate-200/60 bg-white">
                         Anda dapat menekan tombol <strong>"Laporan Dana"</strong> yang terletak di setiap card kampanye.
-                        Sistem akan memunculkan popup berisi ringkasan alokasi logistik beserta nama-nama penerima
+                        Sistem akan memunculkan popup berisi ringkasan alokasi logistik beserta foto dokumentasi dan
+                        nama-nama penerima
                         santunan terverifikasi.
+                    </div>
+                </div>
+
+                <!-- FAQ 3 (BARU: Donatur Anonim) -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                    <button @click="activeFaq = (activeFaq === 3 ? null : 3)"
+                        class="w-full text-left p-3.5 sm:p-4 font-bold text-xs sm:text-base flex justify-between items-center text-slate-800 cursor-pointer gap-2">
+                        <span>Apakah saya bisa berdonasi secara anonim (Hamba Allah)?</span>
+                        <i class="ti text-base sm:text-lg shrink-0"
+                            :class="activeFaq === 3 ? 'ti-minus' : 'ti-plus'"></i>
+                    </button>
+                    <div x-show="activeFaq === 3" x-collapse
+                        class="p-3.5 sm:p-4 pt-0 text-xs sm:text-sm text-slate-500 leading-relaxed border-t border-slate-200/60 bg-white">
+                        Tentu saja. Saat melakukan proses pembayaran/donasi, Anda cukup mencentang opsi
+                        <strong>"Sembunyikan nama saya (Hamba Allah)"</strong>. Nama Anda tidak akan ditampilkan di
+                        daftar publik donatur maupun riwayat kampanye.
+                    </div>
+                </div>
+
+                <!-- FAQ 4 (BARU: Metode Pembayaran) -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                    <button @click="activeFaq = (activeFaq === 4 ? null : 4)"
+                        class="w-full text-left p-3.5 sm:p-4 font-bold text-xs sm:text-base flex justify-between items-center text-slate-800 cursor-pointer gap-2">
+                        <span>Metode pembayaran apa saja yang didukung?</span>
+                        <i class="ti text-base sm:text-lg shrink-0"
+                            :class="activeFaq === 4 ? 'ti-minus' : 'ti-plus'"></i>
+                    </button>
+                    <div x-show="activeFaq === 4" x-collapse
+                        class="p-3.5 sm:p-4 pt-0 text-xs sm:text-sm text-slate-500 leading-relaxed border-t border-slate-200/60 bg-white">
+                        Sistem kami mendukung berbagai metode pembayaran instan meliputi QRIS, E-Wallet (GoPay,
+                        ShopeePay), Transfer Bank/Virtual Account (BCA, BNI, BRI, Mandiri), hingga Kartu Kredit/Debit.
+                    </div>
+                </div>
+
+                <!-- FAQ 5 (BARU: Bukti Donasi & Invoice) -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                    <button @click="activeFaq = (activeFaq === 5 ? null : 5)"
+                        class="w-full text-left p-3.5 sm:p-4 font-bold text-xs sm:text-base flex justify-between items-center text-slate-800 cursor-pointer gap-2">
+                        <span>Apakah saya bisa mendapatkan bukti transaksi / kuitansi donasi?</span>
+                        <i class="ti text-base sm:text-lg shrink-0"
+                            :class="activeFaq === 5 ? 'ti-minus' : 'ti-plus'"></i>
+                    </button>
+                    <div x-show="activeFaq === 5" x-collapse
+                        class="p-3.5 sm:p-4 pt-0 text-xs sm:text-sm text-slate-500 leading-relaxed border-t border-slate-200/60 bg-white">
+                        Bisa. Setiap transaksi yang berhasil akan menerbitkan invoice resmi yang dapat langsung diunduh
+                        dalam bentuk file PDF dari aplikasi mobile maupun halaman konfirmasi pembayaran.
                     </div>
                 </div>
             </div>
@@ -558,18 +636,94 @@
         </div>
     </div>
 
-    <!-- 10. FOOTER RESPONSIVE -->
-    <footer class="bg-slate-900 text-slate-400 py-8 sm:py-12 border-t border-slate-800 text-xs sm:text-sm">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
-            <div class="flex items-center gap-2">
-                <span class="font-black text-base sm:text-lg text-white">For A Smile</span>
-                <span class="text-[11px] sm:text-xs text-slate-500">| © {{ date('Y') }} All Rights
-                    Reserved.</span>
+    <!-- 10. FOOTER RESPONSIVE & MODERN -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 text-xs sm:text-sm">
+        <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:pb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 mb-10 sm:mb-12">
+
+                <!-- Kolom 1: Brand & Profil (2 Spans di Layar Besar) -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="font-black text-xl sm:text-2xl text-white tracking-tight"> For A Smile</span>
+                    </div>
+                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
+                        Platform ekosistem donasi akuntabel yang dirancang khusus untuk meminimalkan kendala
+                        administrasi publik dan mengoptimalkan pendistribusian dana sosial secara presisi & transparan.
+                    </p>
+                    <!-- Sosial Media Icons -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="#"
+                            class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer">
+                            <i class="ti ti-brand-facebook text-base"></i>
+                        </a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-pink-600 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer">
+                            <i class="ti ti-brand-instagram text-base"></i>
+                        </a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-500 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer">
+                            <i class="ti ti-brand-twitter text-base"></i>
+                        </a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer">
+                            <i class="ti ti-brand-youtube text-base"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kolom 2: Navigasi Cepat -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Navigasi</h4>
+                    <ul class="space-y-2 text-xs sm:text-sm">
+                        <li><a href="#tentang" class="hover:text-blue-400 transition">Tentang Kami</a></li>
+                        <li><a href="#kampanye" class="hover:text-blue-400 transition">Katalog Kampanye</a></li>
+                        <li><a href="#laporan" class="hover:text-blue-400 transition">Laporan Keuangan</a></li>
+                        <li><a href="#faq" class="hover:text-blue-400 transition">Pertanyaan Umum (FAQ)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 3: Legalitas & Kebijakan -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Informasi Legal</h4>
+                    <ul class="space-y-2 text-xs sm:text-sm">
+                        <li><a href="#" class="hover:text-blue-400 transition">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition">Transparansi Dana</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition">Izin Penyaluran</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 4: Kontak Yayasan -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Hubungi Kami</h4>
+                    <ul class="space-y-2.5 text-xs sm:text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="ti ti-map-pin text-blue-500 text-base shrink-0 mt-0.5"></i>
+                            <span>Indramayu</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="ti ti-mail text-blue-500 text-base shrink-0"></i>
+                            <span>support@forasmile.org</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="ti ti-phone text-blue-500 text-base shrink-0"></i>
+                            <span>+62 812-3456-7890</span>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
-            <p class="text-[11px] sm:text-xs text-slate-500 text-center md:text-right max-w-md leading-relaxed">
-                Platform ekosistem donasi akuntabel yang dirancang khusus untuk meminimalkan kendala administrasi publik
-                dan mengoptimalkan pendistribusian dana sosial secara presisi.
-            </p>
+
+            <!-- Garis Pembatas & Bottom Copyright -->
+            <div
+                class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] sm:text-xs text-slate-500">
+                <p>© {{ date('Y') }} <strong>For A Smile Foundation</strong>. All Rights Reserved.</p>
+                <p class="flex items-center gap-1">
+                    <span>Dikelola secara akuntabel dengan</span>
+                    <i class="ti ti-shield-check text-emerald-500 text-sm"></i>
+                    <span class="text-slate-400 font-semibold">Keamanan Terverifikasi</span>
+                </p>
+            </div>
         </div>
     </footer>
 
